@@ -1,0 +1,14 @@
+# general
+*.class
+target
+
+# Eclipse
+.classpath
+.project
+bin
+
+# IntellIJ IDEA
+.idea
+*.iml
+*.ipr
+*.iws
