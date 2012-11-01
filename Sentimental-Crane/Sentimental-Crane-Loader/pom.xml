@@ -5,7 +5,7 @@
 
     <name>Sentimental Crane Loader</name>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>at.ac.tuwien.aic.sc.loader</groupId>
+    <groupId>at.ac.tuwien.aic.sc</groupId>
     <artifactId>sentimental-crane-loader</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
@@ -14,7 +14,6 @@
 		<groupId>at.ac.tuwien.aic.sc</groupId>
 		<artifactId>sentimental-crane</artifactId>
 		<version>1.0</version>
-		<relativePath>..</relativePath>
 	</parent>
 	
 	
@@ -22,7 +21,7 @@
     <!-- project dependencies -->
     <dependencies>
 		<dependency>
-            <groupId>at.ac.tuwien.aic.sc.core</groupId>
+            <groupId>at.ac.tuwien.aic.sc</groupId>
             <artifactId>sentimental-crane-core</artifactId>
         </dependency>
         <dependency>
