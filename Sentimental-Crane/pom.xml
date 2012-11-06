@@ -15,9 +15,23 @@
     </organization>
 	
 	<modules>
+		<module>Sentimental-Crane-Analyzer</module>
 		<module>Sentimental-Crane-Core</module>
 		<module>Sentimental-Crane-Loader</module>
+		<module>Sentimental-Crane-Scheduler</module>
+		<module>Sentimental-Crane-Web</module>
 	</modules>
+
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.1</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
 
     <!-- Dependency management -->
     <dependencyManagement>
@@ -32,7 +46,14 @@
                 <artifactId>sentimental-crane-loader</artifactId>
                 <version>1.0</version>
             </dependency>
-            <dependency>
+
+			<dependency>
+				<groupId>javax</groupId>
+				<artifactId>javaee-api</artifactId>
+				<version>6.0</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
                 <groupId>org.json</groupId>
                 <artifactId>json</artifactId>
                 <version>20090211</version>
@@ -51,12 +72,6 @@
                 <groupId>postgresql</groupId>
                 <artifactId>postgresql</artifactId>
                 <version>9.1-901.jdbc4</version>
-            </dependency>
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>4.8.1</version>
-                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
