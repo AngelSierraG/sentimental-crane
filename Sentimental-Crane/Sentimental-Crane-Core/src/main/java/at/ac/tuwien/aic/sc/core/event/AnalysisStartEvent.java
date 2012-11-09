@@ -1,0 +1,40 @@
+package at.ac.tuwien.aic.sc.core.event;
+
+import java.util.Date;
+import java.util.UUID;
+
+/**
+ * @author Dominik Strasser, dominikstr@gmail.com
+ */
+public class AnalysisStartEvent {
+	private String eventId;
+
+	private String companyName;
+
+	private Date from;
+
+	private Date to;
+
+	public AnalysisStartEvent(String companyName, Date from, Date to) {
+		this.companyName = companyName;
+		this.from = from;
+		this.to = to;
+		this.eventId = UUID.randomUUID().toString();
+	}
+
+	public String getEventId() {
+		return eventId;
+	}
+
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public Date getFrom() {
+		return from;
+	}
+
+	public Date getTo() {
+		return to;
+	}
+}
