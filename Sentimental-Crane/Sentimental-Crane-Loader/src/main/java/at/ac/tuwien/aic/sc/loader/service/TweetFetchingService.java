@@ -1,7 +1,6 @@
 package at.ac.tuwien.aic.sc.loader.service;
 
-import at.ac.tuwien.aic.sc.core.entities.Tweet;
-import at.ac.tuwien.aic.sc.core.mapper.TweetMapper;
+import at.ac.tuwien.aic.sc.loader.mapper.TweetMapper;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 

@@ -1,17 +1,15 @@
 package at.ac.tuwien.aic.sc.loader.service;
 
 import at.ac.tuwien.aic.sc.core.entities.Tweet;
-import at.ac.tuwien.aic.sc.core.mapper.PlaceMapper;
-import at.ac.tuwien.aic.sc.core.mapper.TweetMapper;
-import at.ac.tuwien.aic.sc.core.mapper.UserMapper;
+import at.ac.tuwien.aic.sc.loader.mapper.PlaceMapper;
+import at.ac.tuwien.aic.sc.loader.mapper.TweetMapper;
+import at.ac.tuwien.aic.sc.loader.mapper.UserMapper;
 import at.ac.tuwien.aic.sc.loader.service.reading.StatefulTweetReadingService;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.log4j.Logger;
 
 import java.io.*;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.*;
 
 /**

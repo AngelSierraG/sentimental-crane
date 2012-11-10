@@ -19,8 +19,8 @@
         </environment>
     </environments>
     <mappers>
-        <mapper class="at.ac.tuwien.aic.sc.core.mapper.PlaceMapper"/>
-        <mapper class="at.ac.tuwien.aic.sc.core.mapper.TweetMapper"/>
-        <mapper class="at.ac.tuwien.aic.sc.core.mapper.UserMapper"/>
+        <mapper class="at.ac.tuwien.aic.sc.loader.mapper.PlaceMapper"/>
+        <mapper class="at.ac.tuwien.aic.sc.loader.mapper.TweetMapper"/>
+        <mapper class="at.ac.tuwien.aic.sc.loader.mapper.UserMapper"/>
     </mappers>
 </configuration>

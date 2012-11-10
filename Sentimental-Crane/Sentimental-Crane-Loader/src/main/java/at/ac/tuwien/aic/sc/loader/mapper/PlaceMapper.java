@@ -1,7 +1,6 @@
-package at.ac.tuwien.aic.sc.core.mapper;
+package at.ac.tuwien.aic.sc.loader.mapper;
 
 import at.ac.tuwien.aic.sc.core.entities.Place;
-import at.ac.tuwien.aic.sc.core.entities.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
 
