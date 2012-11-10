@@ -3,8 +3,10 @@ package at.ac.tuwien.aic.sc.analyzer;
 import at.ac.tuwien.aic.sc.core.AnalysisService;
 import at.ac.tuwien.aic.sc.core.entities.Company;
 
+import javax.annotation.Resource;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
+import javax.sql.DataSource;
 import java.util.Date;
 import java.util.Random;
 import java.util.logging.Level;
@@ -17,6 +19,9 @@ import java.util.logging.Logger;
 @Remote(AnalysisService.class)
 public class TwitterAnalyseService implements AnalysisService {
 	private static final Logger logger = Logger.getLogger(TwitterAnalyseService.class.getName());
+
+	@Resource(mappedName = "java:/jdbc/AICDS")
+	private DataSource dataSource;
 
 	@Override
 	public double analyse(Company company, Date from, Date to) {
@@ -34,6 +39,7 @@ public class TwitterAnalyseService implements AnalysisService {
 			ms = System.currentTimeMillis();
 		}
 		//TODO: implement!
+		System.out.println("debug: using " + dataSource);
 		double result = new Random().nextDouble() * 10;
 		try {
 			Thread.sleep((long) (result * 10));
