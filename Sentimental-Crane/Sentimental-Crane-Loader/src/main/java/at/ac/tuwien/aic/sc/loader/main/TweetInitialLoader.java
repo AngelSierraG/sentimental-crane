@@ -10,12 +10,20 @@ import java.io.File;
  */
 public class TweetInitialLoader {
     public static void main (String... args) throws Exception {
-        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(TweetInitialLoader.class.getResourceAsStream("mybatis-config.xml"));
+        if (args[0] == null) {
+            throw new IllegalArgumentException("args[0] = sourcefile");
+        }
 
-        File file = new File("E:/tweets_filtered_compressed.txt");
+        File in = new File(args[0]);
+
+        if (!in.exists()) {
+            throw new IllegalArgumentException("sourcefile doesn't exist!");
+        }
+
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(TweetInitialLoader.class.getResourceAsStream("mybatis-config.xml"));
 
         TweetInitialLoadingService tweetInitialLoadingService = new TweetInitialLoadingService(sqlSessionFactory);
 
-        tweetInitialLoadingService.loadTweets(file);
+        tweetInitialLoadingService.loadTweets(in);
     }
 }
