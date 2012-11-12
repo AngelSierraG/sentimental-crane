@@ -1,29 +1,60 @@
 package at.ac.tuwien.aic.sc.loader.main;
 
+import at.ac.tuwien.aic.sc.loader.service.TweetFilePreparationService;
 import at.ac.tuwien.aic.sc.loader.service.TweetInitialLoadingService;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.apache.log4j.Logger;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.net.URL;
 
 /**
  */
 public class TweetInitialLoader {
+    private static final Logger logger = Logger.getLogger(TweetInitialLoader.class);
+
     public static void main (String... args) throws Exception {
         if (args[0] == null) {
             throw new IllegalArgumentException("args[0] = sourcefile");
         }
 
-        File in = new File(args[0]);
+        final URL url = new URL(args[0]);
 
-        if (!in.exists()) {
-            throw new IllegalArgumentException("sourcefile doesn't exist!");
-        }
+        final PipedOutputStream tmpOut = new PipedOutputStream();
+        final PipedInputStream tmpIn = new PipedInputStream(tmpOut);
 
-        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(TweetInitialLoader.class.getResourceAsStream("mybatis-config.xml"));
 
-        TweetInitialLoadingService tweetInitialLoadingService = new TweetInitialLoadingService(sqlSessionFactory);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
 
-        tweetInitialLoadingService.loadTweets(in);
+                TweetFilePreparationService service = new TweetFilePreparationService();
+                try {
+                    service.prepareTweetFile(url.openStream(), tmpOut);
+                }catch (Exception e) {
+                    logger.error(e);
+                }
+            }
+        }).start();
+
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(TweetInitialLoader.class.getResourceAsStream("mybatis-config.xml"));
+
+                TweetInitialLoadingService tweetInitialLoadingService = new TweetInitialLoadingService(sqlSessionFactory);
+
+                try {
+                    tweetInitialLoadingService.loadTweets(tmpIn);
+                } catch (Exception e) {
+                    logger.error(e);
+                }
+            }
+        }).start();
     }
 }

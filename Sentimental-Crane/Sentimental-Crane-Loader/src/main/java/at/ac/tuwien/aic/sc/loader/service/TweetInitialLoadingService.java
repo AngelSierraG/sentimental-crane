@@ -28,7 +28,7 @@ public class TweetInitialLoadingService {
         this.sqlSessionFactory = sqlSessionFactory;
     }
 
-    public void loadTweets(File file) throws IOException {
+    public void loadTweets(InputStream in) throws IOException {
         Set<Long> userIds = new HashSet<Long>();
         Set<String> placesIds = new HashSet<String>();
 
@@ -37,7 +37,7 @@ public class TweetInitialLoadingService {
         UserMapper userMapper = session.getMapper(UserMapper.class);
         PlaceMapper placeMapper = session.getMapper(PlaceMapper.class);
 
-        StatefulTweetReadingService readingService = new StatefulTweetReadingService(file);
+        StatefulTweetReadingService readingService = new StatefulTweetReadingService(in);
 
         for (List<Tweet> tweets = readingService.readTweets(TRANSACTION_SIZE); tweets != null; tweets = readingService.readTweets(TRANSACTION_SIZE)) {
             for (Tweet tweet : tweets) {

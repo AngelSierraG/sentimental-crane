@@ -17,13 +17,13 @@ import java.util.zip.GZIPInputStream;
 public class StatefulTweetReadingService {
     private static final Logger logger = Logger.getLogger(StatefulTweetReadingService.class);
 
-    private File file = null;
+    private InputStream in;
     private BufferedReader reader = null;
     private TweetParser tweetParser = new TweetParser();
     private boolean eof = false;
 
-    public StatefulTweetReadingService(File file) {
-        this.file = file;
+    public StatefulTweetReadingService(InputStream in) {
+        this.in = in;
     }
 
     public List<Tweet> readTweets(int numTweets) throws IOException {
@@ -32,7 +32,7 @@ public class StatefulTweetReadingService {
         }
 
         if (reader == null) {
-            reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(file))));
+            reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(in)));
         }
 
         if (logger.isInfoEnabled()) {

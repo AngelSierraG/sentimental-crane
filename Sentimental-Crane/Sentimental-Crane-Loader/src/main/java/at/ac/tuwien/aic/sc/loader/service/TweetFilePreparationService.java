@@ -6,11 +6,11 @@ import java.util.zip.GZIPOutputStream;
 /**
  */
 public class TweetFilePreparationService {
-    public void prepareTweetFile(File in, File out) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(in)));
+    public void prepareTweetFile(InputStream in, OutputStream out) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 
 
-        PrintStream gzipOut = new PrintStream(new GZIPOutputStream(new FileOutputStream(out)));
+        PrintStream gzipOut = new PrintStream(new GZIPOutputStream(out));
 
         long counter = 0;
 
