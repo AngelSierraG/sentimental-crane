@@ -14,10 +14,11 @@ public interface AnalysisService {
 	/**
 	 * Perform analysis
 	 *
+	 *
 	 * @param company the company to analyse
-	 * @param from	start date
-	 * @param to	  end date
+	 * @param from    start date
+	 * @param to      end date
 	 * @return result
 	 */
-	public double analyse(Company company, Date from, Date to);
+	public AnalysisResult analyse(Company company, Date from, Date to);
 }

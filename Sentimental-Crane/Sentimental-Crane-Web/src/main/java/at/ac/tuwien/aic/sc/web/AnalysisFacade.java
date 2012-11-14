@@ -1,5 +1,6 @@
 package at.ac.tuwien.aic.sc.web;
 
+import at.ac.tuwien.aic.sc.core.AnalysisResult;
 import at.ac.tuwien.aic.sc.core.AnalysisService;
 import at.ac.tuwien.aic.sc.core.entities.Company;
 import at.ac.tuwien.aic.sc.core.event.AnalysisEndEvent;
@@ -38,10 +39,10 @@ public class AnalysisFacade {
 		startBus.fire(e);
 		//start analysis in background
 		//TODO: maybe we should split up the date range
-		double result = service.analyse(company, from, to);
+		AnalysisResult result = service.analyse(company, from, to);
 		//send end event
 		endBus.fire(new AnalysisEndEvent(e.getEventId()));
 		//return the result
-		return new AsyncResult<Double>(result);
+		return new AsyncResult<Double>(result.getResult());
 	}
 }
