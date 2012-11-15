@@ -11,6 +11,8 @@ import org.junit.Test;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.junit.Assert.assertEquals;
 
@@ -20,6 +22,7 @@ public class TwitterAnalyseServiceTest {
 
 	@BeforeClass
 	public static void beforeClass() throws SQLException {
+		Logger.getLogger(DICTIONARY_SERVICE.getClass().getName()).setLevel(Level.OFF);
 		DICTIONARY_SERVICE.buildDefaultLists();
 
 		dataSource = new JDBCDataSource();
@@ -66,7 +69,8 @@ public class TwitterAnalyseServiceTest {
 	}
 
 	@Test
-	@Ignore //TODO: the problem is the not
+	@Ignore
+	//TODO: the problem is the not
 	public void testNonPositiveSentimental() throws Exception {
 		TwitterAnalyseService service = new TwitterAnalyseService();
 		service.dictionaryService = DICTIONARY_SERVICE;
