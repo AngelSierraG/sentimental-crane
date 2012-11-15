@@ -2,14 +2,13 @@ package at.ac.tuwien.aic.sc.core.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author Dominik Strasser, dominikstr@gmail.com
  */
 @Entity
-public class Company implements Serializable{
+public class Company implements Serializable {
 	@Id
 	@GeneratedValue
 	private int id;
@@ -19,6 +18,13 @@ public class Company implements Serializable{
 	@OneToMany
 	@OrderBy("creationDate DESC")
 	private List<AnalyseHistoryEntry> history;
+
+	public Company() {
+	}
+
+	public Company(String name) {
+		this.name = name;
+	}
 
 	public int getId() {
 		return id;
@@ -38,5 +44,10 @@ public class Company implements Serializable{
 
 	public void setHistory(List<AnalyseHistoryEntry> history) {
 		this.history = history;
+	}
+
+	@Override
+	public String toString() {
+		return getName();
 	}
 }
