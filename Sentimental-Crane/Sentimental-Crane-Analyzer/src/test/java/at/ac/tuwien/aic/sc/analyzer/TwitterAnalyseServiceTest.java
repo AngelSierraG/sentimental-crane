@@ -11,6 +11,8 @@ import org.junit.Test;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.List;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,6 +21,7 @@ import static org.junit.Assert.assertEquals;
 public class TwitterAnalyseServiceTest {
 	public static final DictionaryService DICTIONARY_SERVICE = new DictionaryService();
 	static JDBCDataSource dataSource;
+	int row;
 
 	@BeforeClass
 	public static void beforeClass() throws SQLException {
@@ -40,6 +43,7 @@ public class TwitterAnalyseServiceTest {
 		Connection connection = dataSource.getConnection();
 		connection.createStatement().executeUpdate("DELETE FROM tweet");
 		connection.close();
+		row = 0;
 	}
 
 	@Test
@@ -139,22 +143,68 @@ public class TwitterAnalyseServiceTest {
 
 	@Test
 	public void testFormula() throws Exception {
+		double delta = 0.0001;
+		AnalysisResult analysis;
+		Company company = new Company("Google");
+
 		TwitterAnalyseService service = new TwitterAnalyseService();
 		service.dictionaryService = DICTIONARY_SERVICE;
 		service.dataSource = dataSource;
 		Connection connection = dataSource.getConnection();
-		for (int i = 0; i < 10; i++) {
-			connection.createStatement().executeUpdate("INSERT INTO tweet VALUES (" + i + ", CURRENT_TIMESTAMP, 'Google is good', NULL, NULL)");
-		}
-		for (int i = 0; i < 9; i++) {
-			connection.createStatement().executeUpdate("INSERT INTO tweet VALUES (" + (100 + i) + ", CURRENT_TIMESTAMP, 'Google is evil', NULL, NULL)");
-		}
-		connection.close();
 
-		Company company = new Company("Google");
-		AnalysisResult analyse = service.analyse(company, new Date(0), new Date(Long.MAX_VALUE));
-		assertEquals(true, analyse.getResult() > 0);
-		assertEquals(true, analyse.getResult() < 0.5);
-		assertEquals(19, analyse.getNumberOfTweets());
+		try {
+			insert(connection, "Google", true);
+			analysis = service.analyse(company, new Date(0), new Date(Long.MAX_VALUE));
+			assertEquals(1, analysis.getResult(), 0);
+
+			insert(connection, "Google", true);
+			analysis = service.analyse(company, new Date(0), new Date(Long.MAX_VALUE));
+			assertEquals(1, analysis.getResult(), 0);
+
+			insert(connection, "Google", false);
+			analysis = service.analyse(company, new Date(0), new Date(Long.MAX_VALUE));
+			assertEquals(1.0 / 3, analysis.getResult(), delta);
+
+			insert(connection, "Google", false);
+			analysis = service.analyse(company, new Date(0), new Date(Long.MAX_VALUE));
+			assertEquals(0, analysis.getResult(), 0);
+
+			for (int i = 0; i < 6; i++) {
+				insert(connection, "Google", true);
+			}
+			analysis = service.analyse(company, new Date(0), new Date(Long.MAX_VALUE));
+			assertEquals(0.6, analysis.getResult(), delta);
+
+			for (int i = 0; i < 10; i++) {
+				insert(connection, "Google", true);
+			}
+			analysis = service.analyse(company, new Date(0), new Date(Long.MAX_VALUE));
+			assertEquals(0.8, analysis.getResult(), delta);
+
+			for (int i = 0; i < 20; i++) {
+				insert(connection, "Google", true);
+			}
+			analysis = service.analyse(company, new Date(0), new Date(Long.MAX_VALUE));
+			assertEquals(0.9, analysis.getResult(), delta);
+
+			for (int i = 0; i < 40; i++) {
+				insert(connection, "Google", true);
+			}
+			analysis = service.analyse(company, new Date(0), new Date(Long.MAX_VALUE));
+			assertEquals(0.95, analysis.getResult(), delta);
+
+		} finally {
+			connection.close();
+		}
+	}
+
+	void insert(Connection connection, String company, boolean good) throws SQLException {
+		List<String> words = good ? DICTIONARY_SERVICE.getGoodWords() : DICTIONARY_SERVICE.getBadWords();
+		insert(connection, company, words.get(new Random().nextInt(words.size())));
+	}
+
+	void insert(Connection connection, String company, String word) throws SQLException {
+		connection.createStatement().executeUpdate(
+				String.format("INSERT INTO tweet VALUES (%d, CURRENT_TIMESTAMP, '%s is %s', NULL, NULL)", row++, company, word));
 	}
 }
