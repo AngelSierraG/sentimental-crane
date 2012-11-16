@@ -6,6 +6,7 @@ import at.ac.tuwien.aic.sc.core.entities.Company;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang3.StringUtils;
+import org.jboss.ejb3.annotation.Clustered;
 
 import javax.annotation.Resource;
 import javax.ejb.Remote;
@@ -27,6 +28,7 @@ import java.util.logging.Logger;
  */
 @Stateless
 @Remote(AnalysisService.class)
+@Clustered
 public class TwitterAnalyseService implements AnalysisService {
 	private static final Logger logger = Logger.getLogger(TwitterAnalyseService.class.getName());
 
