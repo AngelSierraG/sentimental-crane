@@ -20,6 +20,7 @@
 		<module>Sentimental-Crane-Loader</module>
 		<module>Sentimental-Crane-Scheduler</module>
 		<module>Sentimental-Crane-Web</module>
+		<module>openstack-java-sdk</module>
 	</modules>
 
 
