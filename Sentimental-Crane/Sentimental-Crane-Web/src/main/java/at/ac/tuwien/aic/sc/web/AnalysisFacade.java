@@ -12,16 +12,23 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NameClassPair;
+import javax.naming.NamingEnumeration;
 import java.util.Date;
+import java.util.Properties;
 import java.util.concurrent.Future;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author Dominik Strasser, dominikstr@gmail.com
  */
 @Stateless
 public class AnalysisFacade {
-	//TODO: we should use proper names ;)
-	@EJB(lookup = "java:global/Sentimental-Crane-Analyzer-1.0-jar-with-dependencies/TwitterAnalyseService")
+	private static final Logger logger = Logger.getLogger(AnalysisFacade.class.getName());
+
 	private AnalysisService service;
 
 	@Inject
@@ -32,6 +39,17 @@ public class AnalysisFacade {
 
 	@Asynchronous
 	public Future<Double> analyse(Company company, Date from, Date to) {
+		try {
+			Properties properties = new Properties();
+			properties.put(Context.URL_PKG_PREFIXES, "org.jboss.ejb.client.naming");
+			properties.put(Context.SECURITY_PRINCIPAL, "ejb");
+			properties.put(Context.SECURITY_CREDENTIALS, "test");
+			Context ctx = new InitialContext(properties);
+			service = (AnalysisService)
+					ctx.lookup("ejb:/Sentimental-Crane-Analyzer-1.0-jar-with-dependencies/TwitterAnalyseService!at.ac.tuwien.aic.sc.core.AnalysisService");
+		} catch (Exception e) {
+			logger.log(Level.SEVERE, "Error in JNDI lookup", e);
+		}
 		if (company == null)
 			throw new IllegalArgumentException("Company hasn't to be null");
 		//tell everybody who is interest, we are performing a new analysis

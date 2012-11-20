@@ -8,6 +8,7 @@ import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.ejb3.annotation.Clustered;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
@@ -36,6 +37,11 @@ public class TwitterAnalyseService implements AnalysisService {
 	DataSource dataSource;
 	@Inject
 	DictionaryService dictionaryService;
+
+	@PostConstruct
+	public void start(){
+		System.out.println("Starting up service");
+	}
 
 	@Override
 	public AnalysisResult analyse(Company company, Date from, Date to) {

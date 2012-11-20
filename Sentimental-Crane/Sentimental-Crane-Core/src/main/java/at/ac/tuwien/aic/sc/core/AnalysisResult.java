@@ -1,6 +1,8 @@
 package at.ac.tuwien.aic.sc.core;
 
-public class AnalysisResult {
+import java.io.Serializable;
+
+public class AnalysisResult implements Serializable{
 	double result;
 	int numberOfTweets;
 
