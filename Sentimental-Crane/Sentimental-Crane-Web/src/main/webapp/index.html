@@ -1,16 +1,51 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-        "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-    <title>Sentimental Crane</title>
-</head>
-<body>
-<h1>Welcome to crane</h1>
+<title>Sentiment Analyzer</title>
 
-Use the folliwing links:<br/>
-<ul>
-    <li>Start new analysis for <i>Apple</i>: <a href="analysis?company=Apple">GO</a></li>
-    <li>Check Status: <a href="analysis">STATUS</a></li>
-</ul>
+<link rel="stylesheet" href="css/style.css" type="text/css"
+	media="screen" />
+<link rel="stylesheet" href="css/nivo-slider.css" type="text/css" />
+<link rel="stylesheet" href="css/jquery.fancybox-1.3.4.css"
+	type="text/css" />
+</head>
+
+<body>
+	<!-- header-wrap -->
+	<div id="header-wrap">
+		<p>
+		<h2 align="center">
+			<p>&nbsp;</p>
+			<p>&nbsp;</p>
+			<p>&nbsp;</p>
+			<p>&nbsp;</p>
+			<p>SENTIMENT ANALYZER</p>
+			</h1>
+			</p>
+	</div>
+
+	<!-- content-wrap -->
+	<div class="content-wrap">
+
+		<!-- main -->
+		<form name="Sentiment analysis" method="post">
+			<label for="company"> <img src="pics/header-bg.png"
+				height="50%" width="100%" />
+				<table width="100%" border="0" align="center">
+					<tr>
+						<td>Company:</td>
+						<td><input type="text" name="company" id="company" /></td>
+						<td>From:</td>
+						<td><input type="text" name="timeFrom" id="from" /></td>
+						<td>To:</td>
+						<td><input type="text" name="timeTo" id="to" /></td>
+						<td></td>
+						<td align="center" colspan="6"><input type="submit" name="start"
+							id="start" value="Start Analysis" height="20" width="20" /></td>
+					</tr>
+				</table>
+			</label>
+		</form>
+	</div>
+	<!-- footer -->
 </body>
 </html>
