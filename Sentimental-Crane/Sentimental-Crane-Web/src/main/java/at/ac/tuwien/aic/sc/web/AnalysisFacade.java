@@ -19,6 +19,8 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
+
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
 import java.util.concurrent.Future;
@@ -39,7 +41,7 @@ public class AnalysisFacade {
 
 	@Inject
 	private Event<AnalysisEndEvent> endBus;
-
+	
 	private Integer serversOnline;
 
 	@Asynchronous
@@ -62,13 +64,55 @@ public class AnalysisFacade {
 		startBus.fire(e);
 		//start analysis in background
 		//TODO: maybe we should split up the date range
-		AnalysisResult result = service.analyse(company, from, to);
+		double resultValue = 0;
+		int numberOfTweets = 0;
+		
+		Date incFrom = (Date) from.clone();
+		long presumedDays = daysBetween(from, to);
+		for(long i=0; i<=presumedDays; i++){
+			AnalysisResult partialResult = 
+				service.analyse(company, 
+						incDate(incFrom, i), 
+						incDate(incFrom,(i+1)));
+			resultValue+=partialResult.getResult();
+			numberOfTweets+=partialResult.getNumberOfTweets();
+		}
+		AnalysisResult result = new AnalysisResult(resultValue/presumedDays,numberOfTweets);
+			//service.analyse(company, from, to);
+		
 		//send end event
 		endBus.fire(new AnalysisEndEvent(e.getEventId()));
 		//return the result
 		return new AsyncResult<Double>(result.getResult());
 	}
-
+	
+	public long daysBetween( Date from,  Date to) {
+		Calendar startDate = Calendar.getInstance();
+		startDate.setTime(from);
+		Calendar endDate = Calendar.getInstance();
+		endDate.setTime(to);
+		int MILLIS_IN_DAY = 1000 * 60 * 60 * 24;
+		long endInstant = endDate.getTimeInMillis();
+		int presumedDays = (int) ((endInstant - startDate.getTimeInMillis()) / MILLIS_IN_DAY);
+		Calendar cursor = (Calendar) startDate.clone();
+		cursor.add(Calendar.DAY_OF_YEAR, presumedDays);
+		long instant = cursor.getTimeInMillis();
+		if (instant == endInstant)
+		return presumedDays;
+		final int step = instant < endInstant ? 1 : -1;
+		do {
+		cursor.add(Calendar.DAY_OF_MONTH, step);
+		presumedDays += step;
+		} while (cursor.getTimeInMillis() != endInstant);
+		return presumedDays;
+	}
+	
+	public Date incDate(Date date, long days){
+		Date plusDays = new Date();
+		plusDays.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+		return plusDays;
+	}
+	
 	public Integer getNumberOfInstances() {
 		return serversOnline;
 	}
