@@ -11,4 +11,13 @@
         <servlet-name>AnalysisServlet</servlet-name>
         <url-pattern>/analysis/*</url-pattern>
     </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>ServerStatusServlet</servlet-name>
+        <servlet-class>at.ac.tuwien.aic.sc.web.ServerStatusServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ServerStatusServlet</servlet-name>
+        <url-pattern>/server-status/*</url-pattern>
+    </servlet-mapping>
 </web-app>

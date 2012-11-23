@@ -5,12 +5,15 @@ import at.ac.tuwien.aic.sc.core.AnalysisService;
 import at.ac.tuwien.aic.sc.core.entities.Company;
 import at.ac.tuwien.aic.sc.core.event.AnalysisEndEvent;
 import at.ac.tuwien.aic.sc.core.event.AnalysisStartEvent;
+import at.ac.tuwien.aic.sc.core.event.ServerInstanceChangeEvent;
 
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
+import javax.ejb.Schedule;
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -37,6 +40,8 @@ public class AnalysisFacade {
 	@Inject
 	private Event<AnalysisEndEvent> endBus;
 
+	private Integer serversOnline;
+
 	@Asynchronous
 	public Future<Double> analyse(Company company, Date from, Date to) {
 		try {
@@ -62,5 +67,14 @@ public class AnalysisFacade {
 		endBus.fire(new AnalysisEndEvent(e.getEventId()));
 		//return the result
 		return new AsyncResult<Double>(result.getResult());
+	}
+
+	public Integer getNumberOfInstances() {
+		return serversOnline;
+	}
+	
+	public void newServerInstanceNumber(@Observes ServerInstanceChangeEvent event) {
+		serversOnline = event.getNumberInstances();
+		logger.info("New number of server instances: "+serversOnline);
 	}
 }

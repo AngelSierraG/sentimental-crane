@@ -4,15 +4,18 @@
     <title>Sentimental Crane</title>
 	
 	<style type="text/css">
-		  body {
+		body {
 			padding-top: 60px;
 			padding-bottom: 40px;
-		  }
-		  .search {
+		}
+		.search {
 			max-width: 400px;
-		  }
-		  #analysis label {
+		}
+		#analysis label {
 			display: none;
+		}
+		#footer {
+			text-align: center;
 		}
 	</style>
 	
@@ -72,6 +75,27 @@
 					<a class="btn btn-primary btn-large">Start Analysis</a>
 				</fieldset>
 			</form>
+		</div>
+	</div>
+
+	<div id="footer" class="navbar navbar-inverse navbar-fixed-bottom">
+		<div class="navbar-inner">
+			<div class="container">
+				Active instances
+				<script>
+					function pollActiveInstances(){
+					    $.post('server-status', function(data) {
+							$('#activeInstances').text(data);
+					        setTimeout(pollActiveInstances,5000);
+					    });
+					}
+					
+					$(document).ready(function() {
+						pollActiveInstances();
+					});
+				</script>
+				<span id="activeInstances"></span>
+			</div>
 		</div>
 	</div>
   </body>
