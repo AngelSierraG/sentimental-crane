@@ -40,15 +40,12 @@ public class AnalysisServlet extends HttpServlet {
 	@SuppressWarnings("unchecked")
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
-		String action = request.getParameter("action");
 
+		String company = request.getParameter("company");
 		String fromParam = request.getParameter("timeFrom");
 		String toParam = request.getParameter("timeTo");
 
-		logger.info("Request: " + action + " from " + fromParam + " to " + toParam);
-
-		if ("start".equals(action) && fromParam != null && toParam != null) {
-			String company = request.getParameter("company");
+		if (company != null && fromParam != null && toParam != null) {
 			Date from = null;
 			Date to = null;
 
@@ -59,7 +56,7 @@ public class AnalysisServlet extends HttpServlet {
 				response.getWriter().println("Error parsing date");
 			}
 
-			if (company != null && !company.trim().isEmpty()) {
+			if (!company.trim().isEmpty()) {
 				if (session.getAttribute(CURRENT_REQUEST) != null) {
 					response.getWriter().println("Request already running");
 					return;

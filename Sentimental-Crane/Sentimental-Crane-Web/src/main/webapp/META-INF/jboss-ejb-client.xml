@@ -4,10 +4,11 @@
 		<ejb-receivers>
 			<remoting-ejb-receiver outbound-connection-ref="remote-ejb-connection"/>
 		</ejb-receivers>
+		<!--
 		<clusters>
-			<!-- Configuration for cluster named ejb -->
 			<cluster name="ejb" max-allowed-connected-nodes="5" username="ejb" security-realm="ejb-security-realm"
 					 connect-timeout="5000"/>
 		</clusters>
+		-->
 	</client-context>
 </jboss-ejb-client>

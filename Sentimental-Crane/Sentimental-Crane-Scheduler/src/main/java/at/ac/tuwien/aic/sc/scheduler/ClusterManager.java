@@ -75,7 +75,7 @@ public class ClusterManager {
 		return nodes;
 	}
 
-	@Schedule(second = "10")
+	@Schedule(second = "*/10", minute = "*", hour = "*", persistent = false)
 	public void event() {
 		int instances = getNumberOfRunningNodes();
 		logger.info("Current servers: " + instances);
