@@ -26,10 +26,6 @@ public class ClusterManager {
 	public static final String USERNAME = "aic12w02";
 	public static final String PASSWORD = "Vu6Sotee";
 
-	public static void main(String[] args) {
-		System.out.println(new ClusterManager().getNumberOfRunningNodes());
-	}
-
 	@Asynchronous
 	public void startClusterNode() {
 		List<Server> servers = getServers();
