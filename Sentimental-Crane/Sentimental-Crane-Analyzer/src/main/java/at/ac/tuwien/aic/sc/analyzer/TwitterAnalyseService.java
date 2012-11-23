@@ -12,7 +12,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -35,12 +34,13 @@ public class TwitterAnalyseService implements AnalysisService {
 
 	@Resource(mappedName = "java:/jdbc/AICDS")
 	DataSource dataSource;
-	@Inject
+	// @EJB
 	DictionaryService dictionaryService;
 
 	@PostConstruct
-	public void start(){
+	public void start() {
 		System.out.println("Starting up service");
+		dictionaryService = DictionaryService.getInstance();
 	}
 
 	@Override

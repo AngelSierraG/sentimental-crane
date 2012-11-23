@@ -1,51 +1,78 @@
-<html>
-<head>
-<title>Sentiment Analyzer</title>
-
-<link rel="stylesheet" href="css/style.css" type="text/css"
-	media="screen" />
-<link rel="stylesheet" href="css/nivo-slider.css" type="text/css" />
-<link rel="stylesheet" href="css/jquery.fancybox-1.3.4.css"
-	type="text/css" />
-</head>
-
-<body>
-	<!-- header-wrap -->
-	<div id="header-wrap">
-		<p>
-		<h2 align="center">
-			<p>&nbsp;</p>
-			<p>&nbsp;</p>
-			<p>&nbsp;</p>
-			<p>&nbsp;</p>
-			<p>SENTIMENT ANALYZER</p>
-			</h1>
-			</p>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Sentimental Crane</title>
+	
+	<style type="text/css">
+		  body {
+			padding-top: 60px;
+			padding-bottom: 40px;
+		  }
+		  .search {
+			max-width: 400px;
+		  }
+		  #analysis label {
+			display: none;
+		}
+	</style>
+	
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+	<link href="css/bootstrap-responsive.css" rel="stylesheet">
+	<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+	<!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+	
+	<!-- jquery -->
+	<link rel="stylesheet" href="http://code.jquery.com/ui/1.9.1/themes/base/jquery-ui.css" />
+	<script src="http://code.jquery.com/jquery-1.8.2.js" ></script>
+	<script src="http://code.jquery.com/ui/1.9.1/jquery-ui.js" ></script>
+	
+	<script>
+    $(function() {
+        $( "#fromInput" ).datepicker();
+    });
+	$(function() {
+        $( "#toInput" ).datepicker();
+    });
+    </script>
+  </head>
+  <body>
+    <h1 style="display:none;">Sentimental Crane</h1>
+	
+	<div class="navbar navbar-inverse navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container">
+				<a class="brand" href="#">Sentimental Crane</a>
+			</div>
+		</div>
 	</div>
-
-	<!-- content-wrap -->
-	<div class="content-wrap">
-
-		<!-- main -->
-		<form name="Sentiment analysis" method="post">
-			<label for="company"> <img src="pics/header-bg.png"
-				height="50%" width="100%" />
-				<table width="100%" border="0" align="center">
-					<tr>
-						<td>Company:</td>
-						<td><input type="text" name="company" id="company" /></td>
-						<td>From:</td>
-						<td><input type="text" name="timeFrom" id="from" /></td>
-						<td>To:</td>
-						<td><input type="text" name="timeTo" id="to" /></td>
-						<td></td>
-						<td align="center" colspan="6"><input type="submit" name="start"
-							id="start" value="Start Analysis" height="20" width="20" /></td>
-					</tr>
-				</table>
-			</label>
-		</form>
+	
+	<div class="container search">
+		<div class="hero-unit">
+			<h2>Twitter Analysis</h2>
+			<form name="Sentiment analysis" method="post" id="analysis" action="/Sentimental-Crane-Web-1.0/analysis">
+				<fieldset>
+					<div id="company">
+						<label for="companyInput">Company:</label>
+						<input type="text" name="company" id="companyInput" class="input-block-level" placeholder="Company"/>
+					</div>
+			
+					<div id="from">
+						<label for="fromInput">From:</label>
+						<input type="text" name="timeFrom" id="fromInput" class="input-block-level" placeholder="From"/>
+					</div>
+					
+					<div id="to">
+						<label for="toInput">To:</label>
+						<input type="text" name="timeTo" id="toInput" class="input-block-level" placeholder="To"/>
+					</div>
+					
+					<a class="btn btn-primary btn-large">Start Analysis</a>
+				</fieldset>
+			</form>
+		</div>
 	</div>
-	<!-- footer -->
-</body>
+  </body>
 </html>

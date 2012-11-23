@@ -1,9 +1,5 @@
 package at.ac.tuwien.aic.sc.analyzer;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
 import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
 import java.util.Arrays;
@@ -12,10 +8,11 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@Singleton
-@Startup
+//@Singleton
+//@Startup
 public class DictionaryService implements ConfigurableDictionaryServiceMXBean {
 	private static final Logger logger = Logger.getLogger(DictionaryService.class.getName());
+	private static DictionaryService instance;
 
 	List<String> goodWords;
 	List<String> badWords;
@@ -23,7 +20,19 @@ public class DictionaryService implements ConfigurableDictionaryServiceMXBean {
 
 	ObjectName name = null;
 
-	@PostConstruct
+	public static DictionaryService getInstance() {
+		if (instance == null) {
+			synchronized (DictionaryService.class) {
+				if (instance == null) {
+					instance = new DictionaryService();
+					instance.buildDefaultLists();
+				}
+			}
+		}
+		return instance;
+	}
+
+	// @PostConstruct
 	public void buildDefaultLists() {
 		goodWords = Arrays.asList("cool", "good", "like");
 		badWords = Arrays.asList("bad", "shit", "ugly", "evil");
@@ -37,7 +46,7 @@ public class DictionaryService implements ConfigurableDictionaryServiceMXBean {
 		}
 	}
 
-	@PreDestroy
+	// @PreDestroy
 	public void removeFromJMX() {
 		try {
 			ManagementFactory.getPlatformMBeanServer().unregisterMBean(name);
