@@ -1,129 +1,122 @@
 package at.ac.tuwien.aic.sc.scheduler;
 
+import at.ac.tuwien.aic.sc.scheduler.json.Access;
+import at.ac.tuwien.aic.sc.scheduler.json.Credentials;
+import at.ac.tuwien.aic.sc.scheduler.json.Server;
+import at.ac.tuwien.aic.sc.scheduler.json.Servers;
+import com.sun.jersey.api.client.*;
+import com.sun.jersey.api.client.filter.ClientFilter;
+
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.openstack.keystone.KeystoneClient;
-import org.openstack.keystone.api.Authenticate;
-import org.openstack.keystone.api.ListTenants;
-import org.openstack.keystone.model.Access;
-import org.openstack.keystone.model.Authentication;
-import org.openstack.keystone.model.Tenants;
-import org.openstack.keystone.model.Authentication.PasswordCredentials;
-import org.openstack.keystone.model.Authentication.Token;
-import org.openstack.keystone.utils.KeystoneUtils;
-import org.openstack.nova.NovaClient;
-import org.openstack.nova.api.FlavorsCore;
-import org.openstack.nova.api.ServersCore;
-import org.openstack.nova.model.Flavor;
-import org.openstack.nova.model.Flavors;
-import org.openstack.nova.model.Server;
-import org.openstack.nova.model.ServerForCreate;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 
 /**
  * @author Dominik Strasser, dominikstr@gmail.com
+ * @author Gregor Schauer
  */
 @Stateless
 public class ClusterManager {
 	private static final Logger logger = Logger.getLogger(ClusterManager.class.getName());
+	public static final String TENANT_ID = "cfa61aed5c0a4d6bb10d111e63a3337c";
+	public static final String USERNAME = "aic12w02";
+	public static final String PASSWORD = "Vu6Sotee";
 
-	private static final String KEYSTONE_AUTH_URL = "http://openstack.infosys.tuwien.ac.at:5000/v2.0";
-	private static final String KEYSTONE_USERNAME = "aic12w02";
-	private static final String KEYSTONE_PASSWORD = "Vu6Sotee";
-	
-	private KeystoneClient keystone;
-	private Authentication authentication;
-	private PasswordCredentials passwordCredentials;
-	private Access access;
-	private Tenants tenants;
-	private NovaClient novaClient;
-	
-	private int nodeCounter;
-	private Map<String, Server> servers;
-	
-	public ClusterManager(){
-		keystone = new KeystoneClient(KEYSTONE_AUTH_URL);
-		authentication = new Authentication();
-		passwordCredentials = new PasswordCredentials();
-		passwordCredentials.setUsername(KEYSTONE_USERNAME);
-		passwordCredentials.setPassword(KEYSTONE_PASSWORD);
-		authentication.setPasswordCredentials(passwordCredentials);
-
-		nodeCounter=0;
-		servers = new HashMap<String, Server>();
-		
-		//access with unscoped token
-		access = keystone.execute(new Authenticate(authentication));
-
-		//use the token in the following requests
-		keystone.setToken(access.getToken().getId());
-
-		tenants = keystone.execute(new ListTenants());
-		//try to exchange token using the first tenant
-		if(tenants.getList().size() > 0) {
-
-			authentication = new Authentication();
-			Token token = new Token();
-			token.setId(access.getToken().getId());
-			authentication.setToken(token);
-			authentication.setTenantId(tenants.getList().get(0).getId());
-
-			access = keystone.execute(new Authenticate(authentication));
-
-			novaClient = new NovaClient(KeystoneUtils.findEndpointURL(access.getServiceCatalog(), "compute", null, "public"), access.getToken().getId());
-
-			Flavors flavors = novaClient.execute(FlavorsCore.listFlavors());
-			for(Flavor flavor : flavors) {
-				System.out.println(flavor);
-			}
-
-		} else {
-			System.out.println("No tenants found!");
-		}
+	public static void main(String[] args) {
+		System.out.println(new ClusterManager().getNumberOfRunningNodes());
 	}
-	
+
 	@Asynchronous
 	public void startClusterNode() {
-		ServerForCreate serverForCreate = new ServerForCreate();
-		serverForCreate.setName("node" + nodeCounter);
-		serverForCreate.setFlavorRef("100"); 	// flavor = type of machine -> find out id of m1.tiny
-		serverForCreate.setImageRef("120"); 	// reference of image or snapshot -> find out id of snapshot
-		serverForCreate.setKeyName("node" + nodeCounter);
-		serverForCreate.getSecurityGroups().add(new ServerForCreate.SecurityGroup("default"));
-		
-		Server server = novaClient.execute(ServersCore.createServer(serverForCreate));
-		
-		servers.put(server.getId(), server);
-		
-		System.out.println("Created: \n" + server);
-		
-		logger.info("Starting up cluster node");
+		List<Server> servers = getServers();
+		for (Server server : servers) {
+			if (server.name.startsWith("node") && !server.name.equals("node01") && !server.isActive()) {
+				action(server, "os-start");
 
-	}
-
-	@Asynchronous
-	public void shutdownClusterNode(String id) {
-		novaClient.execute(ServersCore.deleteServer(id));
-		servers.remove(id);
-		logger.info("shutting down cluster node");
-	}
-	
-	@Asynchronous
-	public void shutdownAllClusterNodes() {
-		for(Entry<String, Server> server : servers.entrySet()) {
-			novaClient.execute(ServersCore.deleteServer(server.getKey()));
-			servers.remove(server.getKey());
+				if (!server.isActive() && logger.isLoggable(Level.INFO)) {
+					logger.info("Last known status of server " + server.name + " was " + server.status);
+				}
+				logger.info("Starting server " + server.name);
+				return;
+			}
 		}
+	}
 
-		logger.info("shutting down all cluster nodes");
+	@Asynchronous
+	public void shutdownClusterNode() {
+		List<Server> servers = getServers();
+		for (Server server : servers) {
+			if (server.name.startsWith("node") && !server.name.equals("node01") && server.isActive()) {
+				action(server, "os-stop");
+
+				if (!server.isActive() && logger.isLoggable(Level.INFO)) {
+					logger.info("Last known status of server " + server.name + " was " + server.status);
+				}
+				logger.info("Stopping server " + server.name);
+				return;
+			}
+		}
 	}
 
 	public int getNumberOfRunningNodes() {
-		return servers.size();
+		int nodes = 0;
+		for (Server server : getServers()) {
+			if (server.name.startsWith("node") && server.isActive()) {
+				nodes++;
+			}
+		}
+		return nodes;
+	}
+
+	private void action(Server server, String action) {
+		Client client = getClient();
+		client.resource(getUrl("2", TENANT_ID, "servers", server.id, "action"))
+				.type(APPLICATION_JSON_TYPE).post("{\"" + action + "\": null}");
+		client.destroy();
+	}
+
+	private List<Server> getServers() {
+		Client client = getClient();
+		Servers servers = client.resource(getUrl("2", TENANT_ID, "servers", "detail"))
+				.type(APPLICATION_JSON_TYPE).get(Servers.class);
+		client.destroy();
+		return servers.servers;
+	}
+
+	private Client getClient() {
+		Client client = Client.create();
+		final List<Access> access = client.resource(getUrl("2.0", "tokens"))
+				.type(APPLICATION_JSON_TYPE).post(new GenericType<List<Access>>() {
+				}, new Credentials(USERNAME, PASSWORD, TENANT_ID));
+
+		client.addFilter(new ClientFilter() {
+			@Override
+			public ClientResponse handle(ClientRequest cr) throws ClientHandlerException {
+				cr.getHeaders().add("X-Auth-Token", access.get(0));
+				return getNext().handle(cr);
+			}
+		});
+
+		return client;
+	}
+
+	private String getUrl(String version, String... paths) {
+		StringBuilder url = new StringBuilder();
+		if (version.equals("2.0")) {
+			url.append("http://openstack.infosys.tuwien.ac.at:5000/v2.0");
+		} else if (version.equals("2")) {
+			url.append("http://openstack.infosys.tuwien.ac.at:8774/v2");
+		} else {
+			throw new IllegalArgumentException("API version " + version + " not supported.");
+		}
+
+		for (String path : paths) {
+			url.append("/").append(path);
+		}
+		return url.toString();
 	}
 }
