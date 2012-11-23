@@ -1,8 +1,13 @@
 <jboss-ejb-client xmlns="urn:jboss:ejb-client:1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                  xsi:schemaLocation="urn:jboss:ejb-client:1.0 jboss-ejb-client_1_0.xsd ">
-    <client-context>
-        <ejb-receivers>
-            <remoting-ejb-receiver outbound-connection-ref="remote-ejb-connection"/>
-        </ejb-receivers>
-    </client-context>
+				  xsi:schemaLocation="urn:jboss:ejb-client:1.0 jboss-ejb-client_1_0.xsd ">
+	<client-context>
+		<ejb-receivers>
+			<remoting-ejb-receiver outbound-connection-ref="remote-ejb-connection"/>
+		</ejb-receivers>
+		<clusters>
+			<!-- Configuration for cluster named ejb -->
+			<cluster name="ejb" max-allowed-connected-nodes="5" username="ejb" security-realm="ejb-security-realm"
+					 connect-timeout="5000"/>
+		</clusters>
+	</client-context>
 </jboss-ejb-client>

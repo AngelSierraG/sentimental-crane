@@ -1,6 +1,5 @@
 package at.ac.tuwien.aic.sc.scheduler;
 
-import at.ac.tuwien.aic.sc.core.event.AnalysisStartEvent;
 import at.ac.tuwien.aic.sc.core.event.ServerInstanceChangeEvent;
 import at.ac.tuwien.aic.sc.scheduler.json.Access;
 import at.ac.tuwien.aic.sc.scheduler.json.Credentials;
@@ -13,9 +12,7 @@ import javax.ejb.Asynchronous;
 import javax.ejb.Schedule;
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
-
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,7 +32,7 @@ public class ClusterManager {
 
 	@Inject
 	private Event<ServerInstanceChangeEvent> changeEvent;
-	
+
 	@Asynchronous
 	public void startClusterNode() {
 		List<Server> servers = getServers();
@@ -84,7 +81,7 @@ public class ClusterManager {
 		logger.info("Current servers: " + instances);
 		changeEvent.fire(new ServerInstanceChangeEvent(instances));
 	}
-	
+
 	private void action(Server server, String action) {
 		Client client = getClient();
 		client.resource(getUrl("2", TENANT_ID, "servers", server.id, "action"))
