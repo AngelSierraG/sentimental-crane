@@ -17,7 +17,6 @@ public class ServerStatusServlet extends HttpServlet {
 
 	private static final Logger logger = Logger.getLogger(ServerStatusServlet.class.getName());
 	
-	@EJB
 	private AnalysisFacade facade;
 	
 	@Override
@@ -28,7 +27,7 @@ public class ServerStatusServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		//logger.info("Request: Number of active servers");
-		response.getWriter().println(facade.getNumberOfInstances());
+		response.getWriter().println(facade.getNumberOfInstances().toString());
 		//logger.info("Request complete");
 		return;
 	}
