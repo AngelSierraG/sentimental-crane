@@ -173,7 +173,9 @@
 								}
 			                } else
 			                if(statusText == "error") {
+								window.clearInterval(poll_loop);
 			                	$("#analyseSubmit").removeAttr("disabled");
+			                	$('#analyseLoading').hide();
 			                	$(elementSelector).html("An error occured: " + xhr.status + " - " + xhr.statusText);
 			                }
 			       		});
