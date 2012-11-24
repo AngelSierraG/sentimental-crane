@@ -17,6 +17,9 @@
 		#footer {
 			text-align: center;
 		}
+		.error {
+			color: red;
+		}
 	</style>
 	
     <!-- Bootstrap -->
@@ -60,19 +63,58 @@
 					<div id="company">
 						<label for="companyInput">Company:</label>
 						<input type="text" name="company" id="companyInput" class="input-block-level" placeholder="Company"/>
+						<label for="companyInput" class="error" id="company_error">This field is required</label>
 					</div>
 			
 					<div id="from">
 						<label for="fromInput">From:</label>
 						<input type="text" name="timeFrom" id="fromInput" class="input-block-level" placeholder="From"/>
+						<label for="companyInput" class="error" id="from_error">This field is required</label>
 					</div>
 					
 					<div id="to">
 						<label for="toInput">To:</label>
 						<input type="text" name="timeTo" id="toInput" class="input-block-level" placeholder="To"/>
+						<label for="companyInput" class="error" id="to_error">This field is required</label>
 					</div>
 					
-					<button type="submit" class="btn btn-primary btn-large">Start Analysis</button>
+					<button type="submit" id="analyseSubmit" class="btn btn-primary btn-large">Start Analysis</button>
+					
+					<script>
+					  $(function() {
+						    $('.error').hide();
+						    $("#analyseSubmit").click(function() {
+						      // validate and process form here
+						      $('.error').hide();
+						      var focus = "";
+						  	  var company = $("input#companyInput").val();
+						  	  if (company == "") {
+						        $("label#company_error").show();
+						        if (focus == "") {
+						        	focus = "input#companyInput";
+						        }
+						      }
+						  	  var from = $("input#fromInput").val();
+						  	  if (from == "") {
+						        $("label#from_error").show();
+						        if (focus == "") {
+						        	focus = "input#fromInput";
+						        }
+						      }
+						  	  var to = $("input#toInput").val();
+						  	  if (to == "") {
+						        $("label#to_error").show();
+						        if (focus == "") {
+						        	focus = "input#toInput";
+						        }
+						      }
+						  	  if (focus != "") {
+						  		  $(focus).focus();
+						  		  return false;
+						  	  }
+						    });
+						  });
+					</script>
 				</fieldset>
 			</form>
 		</div>
