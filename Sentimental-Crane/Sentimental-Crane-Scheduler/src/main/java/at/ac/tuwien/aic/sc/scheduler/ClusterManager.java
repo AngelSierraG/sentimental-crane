@@ -76,10 +76,8 @@ public class ClusterManager {
 	}
 
 	@Schedule(second = "*/10", minute = "*", hour = "*", persistent = false)
-	public void event() {
-		int instances = getNumberOfRunningNodes();
-		logger.info("Current servers: " + instances);
-		changeEvent.fire(new ServerInstanceChangeEvent(instances));
+	public void fireServerInstanceChangeEvent() {
+		changeEvent.fire(new ServerInstanceChangeEvent(getNumberOfRunningNodes()));
 	}
 
 	private void action(Server server, String action) {

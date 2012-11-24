@@ -62,54 +62,60 @@ public class TwitterAnalyseService implements AnalysisService {
 		try {
 			Connection connection = dataSource.getConnection();
 			PreparedStatement statement = connection.prepareStatement("SELECT text FROM tweet WHERE tweet_date BETWEEN ? AND ?");
-			statement.setDate(1, new java.sql.Date(from.getTime()));
-			statement.setDate(2, new java.sql.Date(to.getTime()));
-			ResultSet resultSet = statement.executeQuery();
-			int posCounter = 0;
-			int negCounter = 0;
-			while (resultSet.next()) {
-				String text = resultSet.getString(1);
-				text = text.toLowerCase();
+			try {
+				statement.setDate(1, new java.sql.Date(from.getTime()));
+				statement.setDate(2, new java.sql.Date(to.getTime()));
+				ResultSet resultSet = statement.executeQuery();
+				int posCounter = 0;
+				int negCounter = 0;
+				while (resultSet.next()) {
+					String text = resultSet.getString(1);
+					text = text.toLowerCase();
 
-				final String finalText = text;
-				if (!CollectionUtils.exists(companyString(company.getName()), new Predicate() {
-					@Override
-					public boolean evaluate(Object object) {
-						return finalText.contains(object.toString());
+					final String finalText = text;
+					if (!CollectionUtils.exists(companyString(company.getName()), new Predicate() {
+						@Override
+						public boolean evaluate(Object object) {
+							return finalText.contains(object.toString());
+						}
+					})) {
+						continue;
 					}
-				})) {
-					continue;
+
+					text = text.replaceAll("[.,]", "");
+					for (String word : dictionaryService.getStopWords()) {
+						text = text.replace(" " + word + " ", " ");
+					}
+
+					for (String word : dictionaryService.getGoodWords()) {
+						int matches = StringUtils.countMatches(text, word);
+						if (matches != 0) {
+							posCounter++;
+						}
+					}
+					for (String word : dictionaryService.getBadWords()) {
+						int matches = StringUtils.countMatches(text, word);
+						if (matches != 0) {
+							negCounter++;
+						}
+					}
 				}
 
-				text = text.replaceAll("[.,]", "");
-				for (String word : dictionaryService.getStopWords()) {
-					text = text.replace(" " + word + " ", " ");
+				/*
+				 * TODO: verify that adding up both counters is correct
+				 * subtracting them is not correct according to testFormula
+				 */
+				int sentimental = posCounter - negCounter;
+				int counter = posCounter + negCounter;
+				double result = counter == 0 ? 0 : (double) sentimental / counter;
+				if (logger.isLoggable(Level.INFO)) {
+					logger.log(Level.INFO, "Analysis returned without exception in " + (System.currentTimeMillis() - ms) + "ms. Result was: " + result);
 				}
-
-				for (String word : dictionaryService.getGoodWords()) {
-					int matches = StringUtils.countMatches(text, word);
-					if (matches != 0) {
-						posCounter++;
-					}
-				}
-				for (String word : dictionaryService.getBadWords()) {
-					int matches = StringUtils.countMatches(text, word);
-					if (matches != 0) {
-						negCounter++;
-					}
-				}
+				return new AnalysisResult(result, counter);
+			} finally {
+				statement.close();
+				connection.close();
 			}
-			/*
-			 * TODO: verify that adding up both counters is correct
-			 * subtracting them is not correct according to testFormula
-			 */
-			int sentimental = posCounter - negCounter;
-			int counter = posCounter + negCounter;
-			double result = counter == 0 ? 0 : (double) sentimental / counter;
-			if (logger.isLoggable(Level.INFO)) {
-				logger.log(Level.INFO, "Analysis returned without exception in " + (System.currentTimeMillis() - ms) + "ms. Result was: " + result);
-			}
-			return new AnalysisResult(result, counter);
 		} catch (SQLException e) {
 			logger.log(Level.SEVERE, "Error occurred while fetching data from database", e);
 			throw new RuntimeException(e);
