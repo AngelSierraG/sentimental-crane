@@ -76,16 +76,25 @@
 						<label for="toInput">To:</label>
 						<input type="text" name="timeTo" id="toInput" class="input-block-level" placeholder="To"/>
 						<label for="companyInput" class="error" id="to_error">This field is required</label>
+						<label for="companyInput" class="error" id="to_before_from_error">End is before start date!</label>
 					</div>
 					
 					<button type="submit" id="analyseSubmit" class="btn btn-primary btn-large">Start Analysis</button>
+					<img id="analyseLoading" src="images/loading.gif" alt="loading"/>
+					
+					<div id="status"></div>
 					
 					<script>
+					  var poll_loop;
+					
 					  $(function() {
-						    $('.error').hide();
+						  	$("#status").hide();
+						    $(".error").hide();
+						    $('#analyseLoading').hide();
 						    $("#analyseSubmit").click(function() {
 						      // validate and process form here
 						      $('.error').hide();
+						      $("#analyseSubmit").attr("disabled", "disabled");
 						      var focus = "";
 						  	  var company = $("input#companyInput").val();
 						  	  if (company == "") {
@@ -108,12 +117,67 @@
 						        	focus = "input#toInput";
 						        }
 						      }
-						  	  if (focus != "") {
-						  		  $(focus).focus();
-						  		  return false;
+						  	  
+						  	  var startDate = new Date(from);
+						  	  var endDate = new Date(to);
+
+						  	  if (startDate > endDate){
+						  	  	focus = "input#toInput";
+						  	  	$("label#to_before_from_error").show();
 						  	  }
+						  	  
+						  	  if (focus != "") {
+						  		$(focus).focus();
+						  		$("#analyseSubmit").removeAttr("disabled");
+						  		return false;
+						  	  }
+						  	  
+						  	  var dataString = 'company='+ company + '&timeFrom=' + from + '&timeTo=' + to;  
+							  $.ajax({
+							 	beforeSend: function() {
+							 		$('#status').show();
+							 		$('#analyseLoading').show();
+							    	$('#status').html("Starting analysis...");
+						        },
+							    type: "POST",  
+							    url: "./analysis",  
+							    data: dataString,  
+							    success: function(data) {
+							    	$('#status').show();
+							    	$('#status').html(data);
+							    	
+							    	poll_loop = setInterval(function() {
+							    		display_output("#status", './analysis');
+						            }, 2000);
+							    },
+							    error: function() {
+						            $('#status').show();
+						            $('#status').html("Error");
+						        }
+							  });  
+							  return false;
 						    });
 						  });
+					  					 
+					  function display_output(elementSelector, sourceUrl) {
+					  	$(elementSelector).load(sourceUrl, function(responseText, statusText, xhr) {
+			                if(statusText == "success") {
+			                	if (responseText.search("Result") >= 0) {
+							   		window.clearInterval(poll_loop);
+							   		$("#analyseSubmit").removeAttr("disabled");
+							   		$('#analyseLoading').hide();
+								} else if (responseText.search("error") >= 0) {
+									window.clearInterval(poll_loop);
+									$("#analyseSubmit").removeAttr("disabled");
+									$('#analyseLoading').hide();
+								}
+			                } else
+			                if(statusText == "error") {
+			                	$("#analyseSubmit").removeAttr("disabled");
+			                	$(elementSelector).html("An error occured: " + xhr.status + " - " + xhr.statusText);
+			                }
+			       		});
+					  }
 					</script>
 				</fieldset>
 			</form>
