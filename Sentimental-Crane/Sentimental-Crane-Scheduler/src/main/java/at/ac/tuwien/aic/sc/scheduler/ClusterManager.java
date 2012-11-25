@@ -34,33 +34,53 @@ public class ClusterManager {
 	private Event<ServerInstanceChangeEvent> changeEvent;
 
 	@Asynchronous
-	public void startClusterNode() {
+	public void startClusterNodes(final int n) {
+		if (n <= 0) {
+			return;
+		}
+		int cnt = 0;
 		List<Server> servers = getServers();
 		for (Server server : servers) {
 			if (server.name.startsWith("node") && !server.name.equals("node01") && !server.isActive()) {
-				action(server, "os-start");
+				try {
+					action(server, "unpause");
 
-				if (!server.isActive() && logger.isLoggable(Level.INFO)) {
-					logger.info("Last known status of server " + server.name + " was " + server.status);
+					if (!server.isActive() && logger.isLoggable(Level.INFO)) {
+						logger.info("Last known status of server " + server.name + " was " + server.status);
+					}
+					logger.info("Starting server " + server.name);
+					if (++cnt >= n) {
+						return;
+					}
+				} catch (Exception e) {
+					logger.log(Level.WARNING, "Exception occurred during shutdown.", e);
 				}
-				logger.info("Starting server " + server.name);
-				return;
 			}
 		}
 	}
 
 	@Asynchronous
-	public void shutdownClusterNode() {
+	public void shutdownClusterNodes(final int n) {
+		if (n <= 0) {
+			return;
+		}
+		int cnt = 0;
 		List<Server> servers = getServers();
 		for (Server server : servers) {
 			if (server.name.startsWith("node") && !server.name.equals("node01") && server.isActive()) {
-				action(server, "os-stop");
+				try {
+					action(server, "pause");
 
-				if (!server.isActive() && logger.isLoggable(Level.INFO)) {
-					logger.info("Last known status of server " + server.name + " was " + server.status);
+					if (!server.isActive() && logger.isLoggable(Level.INFO)) {
+						logger.info("Last known status of server " + server.name + " was " + server.status);
+					}
+					logger.info("Stopping server " + server.name);
+					if (++cnt >= n) {
+						return;
+					}
+				} catch (Exception e) {
+					logger.log(Level.WARNING, "Exception occurred during shutdown.", e);
 				}
-				logger.info("Stopping server " + server.name);
-				return;
 			}
 		}
 	}

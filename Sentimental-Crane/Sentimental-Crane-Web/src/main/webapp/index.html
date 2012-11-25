@@ -79,19 +79,25 @@
 						<label for="companyInput" class="error" id="to_error">This field is required</label>
 						<label for="companyInput" class="error" id="to_before_from_error">End is before start date!</label>
 					</div>
-					
-					<button type="submit" id="analyseSubmit" class="btn btn-primary btn-large">Start Analysis</button>
-					<img id="analyseLoading" src="images/loading.gif" alt="loading"/>
-					
-					<div id="status"></div>
-					
+
+					<div style="margin-bottom: 3em">
+						<button type="submit" id="analyseSubmit" class="btn btn-primary btn-large" style="width: 60%; float: left">Start Analysis</button>
+						<button type="reset" id="reset" class="btn btn-danger btn-large" style="width: 30%; float: right">Reset</button>
+					</div>
+					<div id="status" class="btn-info btn-large" style="text-align: center"></div>
+
 					<script>
 					  var poll_loop;
 					
 					  $(function() {
 						  	$("#status").hide();
 						    $(".error").hide();
-						    $('#analyseLoading').hide();
+							$("#reset").click(function() {
+								window.clearInterval(poll_loop);
+								$("#analyseSubmit").removeAttr("disabled");
+								$("#status").hide();
+								$(".error").hide();
+							});
 						    $("#analyseSubmit").click(function() {
 						      // validate and process form here
 						      $('.error').hide();
@@ -132,12 +138,11 @@
 						  		$("#analyseSubmit").removeAttr("disabled");
 						  		return false;
 						  	  }
-						  	  
-						  	  var dataString = 'company='+ company + '&timeFrom=' + from + '&timeTo=' + to;  
+
+						  	  var dataString = 'company='+ company + '&timeFrom=' + from + '&timeTo=' + to;
 							  $.ajax({
 							 	beforeSend: function() {
 							 		$('#status').show();
-							 		$('#analyseLoading').show();
 							    	$('#status').html("Starting analysis...");
 						        },
 							    type: "POST",  
@@ -167,18 +172,15 @@
 			                	if (responseText.search("Result") >= 0) {
 							   		window.clearInterval(poll_loop);
 							   		$("#analyseSubmit").removeAttr("disabled");
-							   		$('#analyseLoading').hide();
-								} else if (responseText.search("error") >= 0) {
+								} else if (responseText.search("Error") >= 0) {
 									window.clearInterval(poll_loop);
 									$("#analyseSubmit").removeAttr("disabled");
-									$('#analyseLoading').hide();
 								}
 			                } else
 			                if(statusText == "error") {
 								window.clearInterval(poll_loop);
 			                	$("#analyseSubmit").removeAttr("disabled");
-			                	$('#analyseLoading').hide();
-			                	$(elementSelector).html("An error occured: " + xhr.status + " - " + xhr.statusText);
+			                	$(elementSelector).html("An error occurred: " + xhr.status + " - " + xhr.statusText);
 			                }
 			       		});
 					  }

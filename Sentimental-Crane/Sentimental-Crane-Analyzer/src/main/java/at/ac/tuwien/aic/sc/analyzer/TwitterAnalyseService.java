@@ -49,7 +49,7 @@ public class TwitterAnalyseService implements AnalysisService {
 		if (company == null || company.getName() == null || company.getName().trim().isEmpty())
 			throw new IllegalArgumentException("Analysis isn't possible because of invalid company");
 		if (from == null || to == null)
-			throw new IllegalArgumentException("Analysis ins't possible: No date range specified");
+			throw new IllegalArgumentException("Analysis isn't possible: No date range specified");
 		if (from.after(to))
 			throw new IllegalArgumentException("Invalid date range: start date is after end date");
 		//okay, parameters seems to be okay - ready to rumble

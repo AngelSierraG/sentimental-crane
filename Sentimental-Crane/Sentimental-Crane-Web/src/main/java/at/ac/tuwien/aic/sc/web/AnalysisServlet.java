@@ -73,19 +73,19 @@ public class AnalysisServlet extends HttpServlet {
 				Future<Double> analysis = (Future<Double>) session.getAttribute(CURRENT_REQUEST);
 				if (analysis.isDone()) {
 					try {
-						response.getWriter().println("Last Analysis: " + analysis.get());
+						response.getWriter().println("Result: " + analysis.get());
 						session.removeAttribute(CURRENT_REQUEST);
 					} catch (Exception e) {
 						logger.log(Level.SEVERE, "Error fetching result", e);
 						response.setStatus(500);
-						response.getWriter().println("!!! error !!!");
+						response.getWriter().println("!!! Error !!!");
 						session.removeAttribute(CURRENT_REQUEST);
 					}
 				} else {
-					response.getWriter().println("running...");
+					response.getWriter().println("Computing...");
 				}
 			} else {
-				response.getWriter().println("nothing running for you");
+				response.getWriter().println("Nothing to do");
 			}
 		}
 	}

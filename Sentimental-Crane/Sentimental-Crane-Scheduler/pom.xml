@@ -32,5 +32,10 @@
 			<artifactId>jersey-json</artifactId>
 			<version>1.14</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 </project>
