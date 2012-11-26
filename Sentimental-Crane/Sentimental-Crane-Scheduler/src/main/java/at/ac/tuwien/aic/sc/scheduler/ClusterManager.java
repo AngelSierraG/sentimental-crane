@@ -43,7 +43,7 @@ public class ClusterManager {
 		for (Server server : servers) {
 			if (server.name.startsWith("node") && !server.name.equals("node01") && !server.isActive()) {
 				try {
-					action(server, "unpause");
+					action(server, "resume");
 
 					if (!server.isActive() && logger.isLoggable(Level.INFO)) {
 						logger.info("Last known status of server " + server.name + " was " + server.status);
@@ -69,7 +69,7 @@ public class ClusterManager {
 		for (Server server : servers) {
 			if (server.name.startsWith("node") && !server.name.equals("node01") && server.isActive()) {
 				try {
-					action(server, "pause");
+					action(server, "suspend");
 
 					if (!server.isActive() && logger.isLoggable(Level.INFO)) {
 						logger.info("Last known status of server " + server.name + " was " + server.status);
@@ -95,7 +95,7 @@ public class ClusterManager {
 		return nodes;
 	}
 
-	@Schedule(second = "*/10", minute = "*", hour = "*", persistent = false)
+	@Schedule(second = "*/2", minute = "*", hour = "*", persistent = false)
 	public void fireServerInstanceChangeEvent() {
 		changeEvent.fire(new ServerInstanceChangeEvent(getNumberOfRunningNodes()));
 	}

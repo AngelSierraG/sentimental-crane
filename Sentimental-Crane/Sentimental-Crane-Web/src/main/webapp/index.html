@@ -21,6 +21,14 @@
 		.error {
 			color: red;
 		}
+		#footer {
+			color: #ccc;
+			font-size: 20px;
+			line-height: 36px;
+		}
+		.navbar-inverse .brand {
+			color: #ccc !important;
+		}
 	</style>
 	
     <!-- Bootstrap -->
@@ -82,7 +90,7 @@
 
 					<div style="margin-bottom: 3em">
 						<button type="submit" id="analyseSubmit" class="btn btn-primary btn-large" style="width: 60%; float: left">Start Analysis</button>
-						<button type="reset" id="reset" class="btn btn-danger btn-large" style="width: 30%; float: right">Reset</button>
+						<button type="reset" id="reset" class="btn btn-warning btn-large" style="width: 30%; float: right">Reset</button>
 					</div>
 					<div id="status" class="btn-info btn-large" style="text-align: center"></div>
 
@@ -198,7 +206,7 @@
 					function pollActiveInstances(){
 					    $.post('server-status', function(data) {
 							$('#activeInstances').text(data);
-					        setTimeout(pollActiveInstances,5000);
+					        setTimeout(pollActiveInstances, 1000);
 					    }, "text");
 					}
 					

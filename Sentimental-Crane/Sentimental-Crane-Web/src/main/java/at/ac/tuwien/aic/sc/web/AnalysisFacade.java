@@ -5,7 +5,6 @@ import at.ac.tuwien.aic.sc.core.entities.Company;
 import at.ac.tuwien.aic.sc.core.event.AnalysisEndEvent;
 import at.ac.tuwien.aic.sc.core.event.AnalysisStartEvent;
 import at.ac.tuwien.aic.sc.core.event.ServerInstanceChangeEvent;
-import org.apache.commons.lang3.time.DateUtils;
 
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
@@ -59,7 +58,7 @@ public class AnalysisFacade {
 		//start analysis in background
 		int days = (int) TimeUnit.MILLISECONDS.toDays(to.getTime() - from.getTime());
 		List<Future<AnalysisResult>> futures = new ArrayList<Future<AnalysisResult>>(days);
-		for (int i = 0; i <= days; i++) {
+		for (int i = 0; i < days; i++) {
 			Future<AnalysisResult> result = analysisScheduler.schedule(company, addDays(from, i), addDays(from, i + 1));
 			futures.add(result);
 		}

@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -24,6 +25,7 @@ import java.util.logging.Logger;
 public class AnalysisServlet extends HttpServlet {
 	private static final String CURRENT_REQUEST = "CURRENT REQUEST";
 	private static final DateFormat DATE_FORMATTER = new SimpleDateFormat("MM/dd/yyyy");
+	private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.#######");
 
 	private static final Logger logger = Logger.getLogger(AnalysisServlet.class.getName());
 
@@ -73,7 +75,7 @@ public class AnalysisServlet extends HttpServlet {
 				Future<Double> analysis = (Future<Double>) session.getAttribute(CURRENT_REQUEST);
 				if (analysis.isDone()) {
 					try {
-						response.getWriter().println("Result: " + analysis.get());
+						response.getWriter().println("Result: " + DECIMAL_FORMAT.format(analysis.get()));
 						session.removeAttribute(CURRENT_REQUEST);
 					} catch (Exception e) {
 						logger.log(Level.SEVERE, "Error fetching result", e);
