@@ -48,7 +48,7 @@ public class SimpleComputationLoadPredictor implements ComputationLoadPredictor 
 	@Override
 	public Integer predict(AnalysisEndEvent event) {
 		if (specialEventMap.remove(event.getStartEventId()) != null) {
-			logger.info("High load analysis ended - " + specialEventMap.size() + " remaining high load analysis");
+			logger.info("High load analysis ended - " + specialEventMap.size() + " remaining high load analyses");
 		} else {
 			AnalysisStartEvent startEvent = eventMap.remove(event.getStartEventId());
 			days -= TimeUnit.MILLISECONDS.toDays(startEvent.getTo().getTime() - startEvent.getFrom().getTime());

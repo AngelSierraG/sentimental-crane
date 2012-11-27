@@ -108,6 +108,7 @@ public class TwitterAnalyseService implements AnalysisService {
 				int sentimental = posCounter - negCounter;
 				int counter = posCounter + negCounter;
 				double result = counter == 0 ? 0 : (double) sentimental / counter;
+				result = (result + 1) / 2;
 				if (logger.isLoggable(Level.INFO)) {
 					logger.log(Level.INFO, "Analysis returned without exception in " + (System.currentTimeMillis() - ms) + "ms. Result was: " + result);
 				}

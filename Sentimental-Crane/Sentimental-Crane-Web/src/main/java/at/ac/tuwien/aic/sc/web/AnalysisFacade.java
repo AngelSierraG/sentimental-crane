@@ -16,8 +16,10 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -56,28 +58,31 @@ public class AnalysisFacade {
 		}
 
 		//start analysis in background
-		int days = (int) TimeUnit.MILLISECONDS.toDays(to.getTime() - from.getTime());
+		int days = Math.max(1, (int) TimeUnit.MILLISECONDS.toDays(to.getTime() - from.getTime()));
 		List<Future<AnalysisResult>> futures = new ArrayList<Future<AnalysisResult>>(days);
 		for (int i = 0; i < days; i++) {
 			Future<AnalysisResult> result = analysisScheduler.schedule(company, addDays(from, i), addDays(from, i + 1));
 			futures.add(result);
 		}
 
-		int tweets = 0;
+		int sum = 0;
 		double sentimental = 0;
 		for (Future<AnalysisResult> future : futures) {
 			try {
 				AnalysisResult result = future.get(20, TimeUnit.SECONDS);
-				tweets += result.getNumberOfTweets();
-				sentimental += result.getResult();
-			} catch (Exception ex) {
+				sum += result.getNumberOfTweets();
+				sentimental += (result.getResult() * result.getNumberOfTweets());
+			} catch (TimeoutException ex) {
 				//fail silent
+			} catch (InterruptedException ex) {
+				ex.printStackTrace();
+			} catch (ExecutionException ex) {
+				ex.printStackTrace();
 			}
 		}
 
 		endBus.fire(new AnalysisEndEvent(e.getEventId()));
-		AnalysisResult aggregatedResult = new AnalysisResult(sentimental, tweets);
-		return new AsyncResult<Double>(aggregatedResult.getResult());
+		return new AsyncResult<Double>(sum != 0 ? sentimental / sum : 0.5);
 	}
 
 	public Integer getNumberOfInstances() {
