@@ -67,11 +67,11 @@ public class AnalysisFacade {
 		double sentimental = 0;
 		for (Future<AnalysisResult> future : futures) {
 			try {
-				AnalysisResult result = future.get();
+				AnalysisResult result = future.get(20, TimeUnit.SECONDS);
 				tweets += result.getNumberOfTweets();
 				sentimental += result.getResult();
 			} catch (Exception ex) {
-				logger.log(Level.WARNING, "Cannot retrieve asynchronous analysis result.", ex);
+				//fail silent
 			}
 		}
 
