@@ -75,7 +75,7 @@ public class AnalysisServlet extends HttpServlet {
 				Future<Double> analysis = (Future<Double>) session.getAttribute(CURRENT_REQUEST);
 				if (analysis.isDone()) {
 					try {
-						response.getWriter().println("Result: " + DECIMAL_FORMAT.format(analysis.get()));
+						response.getWriter().println(DECIMAL_FORMAT.format(analysis.get()));
 						session.removeAttribute(CURRENT_REQUEST);
 					} catch (Exception e) {
 						logger.log(Level.SEVERE, "Error fetching result", e);

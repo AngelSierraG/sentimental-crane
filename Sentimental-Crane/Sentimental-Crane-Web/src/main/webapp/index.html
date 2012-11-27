@@ -1,222 +1,257 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <title>Sentimental Crane</title>
     <meta charset="utf-8">
-	
-	<style type="text/css">
-		body {
-			padding-top: 60px;
-			padding-bottom: 40px;
-		}
-		.search {
-			max-width: 400px;
-		}
-		#analysis label {
-			display: none;
-		}
-		#footer {
-			text-align: center;
-		}
-		.error {
-			color: red;
-		}
-		#footer {
-			color: #ccc;
-			font-size: 20px;
-			line-height: 36px;
-		}
-		.navbar-inverse .brand {
-			color: #ccc !important;
-		}
-	</style>
-	
+
+    <style type="text/css">
+        body {
+            padding-top: 60px;
+            padding-bottom: 40px;
+        }
+
+        .search {
+            max-width: 400px;
+        }
+
+        #analysis label {
+            display: none;
+        }
+
+        #footer {
+            text-align: center;
+        }
+
+        .error {
+            color: red;
+        }
+
+        #footer {
+            color: #ccc;
+            font-size: 20px;
+            line-height: 36px;
+        }
+
+        .navbar-inverse .brand {
+            color: #ccc !important;
+        }
+
+        .ui-progressbar .ui-widget-header{
+            background-color: #2F96B4;
+        }
+
+        #result{
+            text-align:center;
+            font-size:small;
+        }
+        
+
+    </style>
+
     <!-- Bootstrap -->
     <link href="css/bootstrap.css" rel="stylesheet">
-	<link href="css/bootstrap-responsive.css" rel="stylesheet">
-	<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-	<!--[if lt IE 9]>
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-	
-	<!-- jquery -->
-	<link rel="stylesheet" href="http://code.jquery.com/ui/1.9.1/themes/base/jquery-ui.css" />
-	<script src="http://code.jquery.com/jquery-1.8.2.js" ></script>
-	<script src="http://code.jquery.com/ui/1.9.1/jquery-ui.js" ></script>
-	
-	<script>
-    $(function() {
-        $( "#fromInput" ).datepicker();
-    });
-	$(function() {
-        $( "#toInput" ).datepicker();
-    });
+
+    <!-- jquery -->
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.1/themes/base/jquery-ui.css"/>
+    <script src="http://code.jquery.com/jquery-1.8.2.js"></script>
+    <script src="http://code.jquery.com/ui/1.9.1/jquery-ui.js"></script>
+
+    <script>
+        $(function() {
+            $("#fromInput").datepicker();
+        });
+        $(function() {
+            $("#toInput").datepicker();
+        });
     </script>
-  </head>
-  <body>
-    <h1 style="display:none;">Sentimental Crane</h1>
-	
-	<div class="navbar navbar-inverse navbar-fixed-top">
-		<div class="navbar-inner">
-			<div class="container">
-				<a class="brand" href="#">Sentimental Crane</a>
-			</div>
-		</div>
-	</div>
-	
-	<div class="container search">
-		<div class="hero-unit">
-			<h2>Twitter Analysis</h2>
-			<form name="Sentiment analysis" method="post" id="analysis" action="./analysis">
-				<fieldset>
-					<div id="company">
-						<label for="companyInput">Company:</label>
-						<input type="text" name="company" id="companyInput" class="input-block-level" placeholder="Company"/>
-						<label for="companyInput" class="error" id="company_error">This field is required</label>
-					</div>
-			
-					<div id="from">
-						<label for="fromInput">From:</label>
-						<input type="text" name="timeFrom" id="fromInput" class="input-block-level" placeholder="From"/>
-						<label for="companyInput" class="error" id="from_error">This field is required</label>
-					</div>
-					
-					<div id="to">
-						<label for="toInput">To:</label>
-						<input type="text" name="timeTo" id="toInput" class="input-block-level" placeholder="To"/>
-						<label for="companyInput" class="error" id="to_error">This field is required</label>
-						<label for="companyInput" class="error" id="to_before_from_error">End is before start date!</label>
-					</div>
+</head>
+<body>
+<h1 style="display:none;">Sentimental Crane</h1>
 
-					<div style="margin-bottom: 3em">
-						<button type="submit" id="analyseSubmit" class="btn btn-primary btn-large" style="width: 60%; float: left">Start Analysis</button>
-						<button type="reset" id="reset" class="btn btn-warning btn-large" style="width: 30%; float: right">Reset</button>
-					</div>
-					<div id="status" class="btn-info btn-large" style="text-align: center"></div>
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="brand" href="#">Sentimental Crane</a>
+        </div>
+    </div>
+</div>
 
-					<script>
-					  var poll_loop;
-					
-					  $(function() {
-						  	$("#status").hide();
-						    $(".error").hide();
-							$("#reset").click(function() {
-								window.clearInterval(poll_loop);
-								$("#analyseSubmit").removeAttr("disabled");
-								$("#status").hide();
-								$(".error").hide();
-							});
-						    $("#analyseSubmit").click(function() {
-						      // validate and process form here
-						      $('.error').hide();
-						      $("#analyseSubmit").attr("disabled", "disabled");
-						      var focus = "";
-						  	  var company = $("input#companyInput").val();
-						  	  if (company == "") {
-						        $("label#company_error").show();
-						        if (focus == "") {
-						        	focus = "input#companyInput";
-						        }
-						      }
-						  	  var from = $("input#fromInput").val();
-						  	  if (from == "") {
-						        $("label#from_error").show();
-						        if (focus == "") {
-						        	focus = "input#fromInput";
-						        }
-						      }
-						  	  var to = $("input#toInput").val();
-						  	  if (to == "") {
-						        $("label#to_error").show();
-						        if (focus == "") {
-						        	focus = "input#toInput";
-						        }
-						      }
-						  	  
-						  	  var startDate = new Date(from);
-						  	  var endDate = new Date(to);
+<div class="container search">
+    <div class="hero-unit">
+        <h2>Twitter Analysis</h2>
 
-						  	  if (startDate > endDate){
-						  	  	focus = "input#toInput";
-						  	  	$("label#to_before_from_error").show();
-						  	  }
-						  	  
-						  	  if (focus != "") {
-						  		$(focus).focus();
-						  		$("#analyseSubmit").removeAttr("disabled");
-						  		return false;
-						  	  }
+        <form name="Sentiment analysis" method="post" id="analysis" action="./analysis">
+            <fieldset>
+                <div id="company">
+                    <label for="companyInput">Company:</label>
+                    <input type="text" name="company" id="companyInput" class="input-block-level"
+                           placeholder="Company"/>
+                    <label for="companyInput" class="error" id="company_error">This field is required</label>
+                </div>
 
-						  	  var dataString = 'company='+ company + '&timeFrom=' + from + '&timeTo=' + to;
-							  $.ajax({
-							 	beforeSend: function() {
-							 		$('#status').show();
-							    	$('#status').html("Starting analysis...");
-						        },
-							    type: "POST",  
-							    url: "./analysis",
-							    dataType: "text",
-							    data: dataString,  
-							    success: function(data) {
-							    	$('#status').show();
-							    	$('#status').html(data);
-							    	
-							    	poll_loop = setInterval(function() {
-							    		display_output("#status", './analysis');
-						            }, 2000);
-							    },
-							    error: function() {
-						            $('#status').show();
-						            $('#status').html("Error");
-						        }
-							  });  
-							  return false;
-						    });
-						  });
-					  					 
-					  function display_output(elementSelector, sourceUrl) {
-					  	$(elementSelector).load(sourceUrl, function(responseText, statusText, xhr) {
-			                if(statusText == "success") {
-			                	if (responseText.search("Result") >= 0) {
-							   		window.clearInterval(poll_loop);
-							   		$("#analyseSubmit").removeAttr("disabled");
-								} else if (responseText.search("Error") >= 0) {
-									window.clearInterval(poll_loop);
-									$("#analyseSubmit").removeAttr("disabled");
-								}
-			                } else
-			                if(statusText == "error") {
-								window.clearInterval(poll_loop);
-			                	$("#analyseSubmit").removeAttr("disabled");
-			                	$(elementSelector).html("An error occurred: " + xhr.status + " - " + xhr.statusText);
-			                }
-			       		});
-					  }
-					</script>
-				</fieldset>
-			</form>
-		</div>
-	</div>
+                <div id="from">
+                    <label for="fromInput">From:</label>
+                    <input type="text" name="timeFrom" id="fromInput" class="input-block-level" placeholder="From"/>
+                    <label for="companyInput" class="error" id="from_error">This field is required</label>
+                </div>
 
-	<div id="footer" class="navbar navbar-inverse navbar-fixed-bottom">
-		<div class="navbar-inner">
-			<div class="container">
-				Active instances
-				<script>
-					function pollActiveInstances(){
-					    $.post('server-status', function(data) {
-							$('#activeInstances').text(data);
-					        setTimeout(pollActiveInstances, 1000);
-					    }, "text");
-					}
-					
-					$(document).ready(function() {
-						pollActiveInstances();
-					});
-				</script>
-				<span id="activeInstances"></span>
-			</div>
-		</div>
-	</div>
-  </body>
+                <div id="to">
+                    <label for="toInput">To:</label>
+                    <input type="text" name="timeTo" id="toInput" class="input-block-level" placeholder="To"/>
+                    <label for="companyInput" class="error" id="to_error">This field is required</label>
+                    <label for="companyInput" class="error" id="to_before_from_error">End is before start date!</label>
+                </div>
+
+                <div style="margin-bottom: 3em">
+                    <button type="submit" id="analyseSubmit" class="btn btn-primary btn-large"
+                            style="width: 60%; float: left">Start Analysis
+                    </button>
+                    <button type="reset" id="reset" class="btn btn-warning btn-large" style="width: 30%; float: right">
+                        Reset
+                    </button>
+                </div>
+                <div id="status" class="btn-info btn-large" style="text-align: center"></div>
+                <br/>
+
+                <div id="progressbar"></div>
+                <div id="result"></div>
+
+                <script>
+                    var poll_loop;
+
+
+                    $(function() {
+                        $("#status").hide();
+                        $("#progressbar").hide();
+                        $(".error").hide();
+                        $("#reset").click(function() {
+                            window.clearInterval(poll_loop);
+                            $("#analyseSubmit").removeAttr("disabled");
+                            $("#status").hide();
+                            $(".error").hide();
+                        });
+                        $("#analyseSubmit").click(function() {
+                            // validate and process form here
+                            $('.error').hide();
+                            $("#analyseSubmit").attr("disabled", "disabled");
+                            var focus = "";
+                            var company = $("input#companyInput").val();
+                            if (company == "") {
+                                $("label#company_error").show();
+                                if (focus == "") {
+                                    focus = "input#companyInput";
+                                }
+                            }
+                            var from = $("input#fromInput").val();
+                            if (from == "") {
+                                $("label#from_error").show();
+                                if (focus == "") {
+                                    focus = "input#fromInput";
+                                }
+                            }
+                            var to = $("input#toInput").val();
+                            if (to == "") {
+                                $("label#to_error").show();
+                                if (focus == "") {
+                                    focus = "input#toInput";
+                                }
+                            }
+
+                            var startDate = new Date(from);
+                            var endDate = new Date(to);
+
+                            if (startDate > endDate) {
+                                focus = "input#toInput";
+                                $("label#to_before_from_error").show();
+                            }
+
+                            if (focus != "") {
+                                $(focus).focus();
+                                $("#analyseSubmit").removeAttr("disabled");
+                                return false;
+                            }
+
+                            var dataString = 'company=' + company + '&timeFrom=' + from + '&timeTo=' + to;
+                            $.ajax({
+                                beforeSend: function() {
+                                    $('#status').show();
+                                    $("#progressbar").hide();
+                                    $("#result").hide();
+                                    $('#status').html("Starting analysis...");
+                                },
+                                type: "POST",
+                                url: "./analysis",
+                                dataType: "text",
+                                data: dataString,
+                                success: function(data) {
+                                    $('#status').show();
+                                    $('#status').html(data);
+
+                                    poll_loop = setInterval(function() {
+                                        display_output("#status", './analysis');
+                                    }, 2000);
+                                },
+                                error: function() {
+                                    $('#status').show();
+                                    $('#status').html("Error");
+                                }
+                            });
+                            return false;
+                        });
+                    });
+
+                    function display_output(elementSelector, sourceUrl) {
+                        $(elementSelector).load(sourceUrl, function(responseText, statusText, xhr) {
+                            if (statusText == "success") {
+                                if (responseText.search("Computing") < 0) {
+                                    window.clearInterval(poll_loop);
+                                    $("#analyseSubmit").removeAttr("disabled");
+                                    $("#status").hide();
+                                    $("#progressbar").show();
+                                    $("#result").show();
+                                    $("#progressbar").progressbar({ value: 0.0001 });
+                                    var v = parseFloat(responseText) * 100;
+                                    $("#progressbar .ui-progressbar-value").animate({width: v + '%' }, 'slow')
+                                    $("#result").html('CRANEoMETER: '+v);
+                                }
+                            } else
+                            if (statusText == "error") {
+                                window.clearInterval(poll_loop);
+                                $("#analyseSubmit").removeAttr("disabled");
+                                $(elementSelector).html("An error occurred: " + xhr.status + " - " + xhr.statusText);
+                            }
+                        });
+                    }
+                </script>
+            </fieldset>
+        </form>
+    </div>
+</div>
+
+<div id="footer" class="navbar navbar-inverse navbar-fixed-bottom">
+    <div class="navbar-inner">
+        <div class="container">
+            Active instances
+            <script>
+                function pollActiveInstances() {
+                    $.post('server-status', function(data) {
+                        $('#activeInstances').text(data);
+                        setTimeout(pollActiveInstances, 1000);
+                    }, "text");
+                }
+
+                $(document).ready(function() {
+                    pollActiveInstances();
+                });
+            </script>
+            <span id="activeInstances"></span>
+        </div>
+    </div>
+</div>
+</body>
 </html>
