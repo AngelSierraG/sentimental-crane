@@ -64,8 +64,20 @@ public class ClusterManager {
 		if (n <= 0) {
 			return;
 		}
-		int cnt = 0;
+
+		// Prevent shutdown of last node
+		int activeServers = 0;
 		List<Server> servers = getServers();
+		for (Server server : servers) {
+			if (server.isActive()) {
+				activeServers++;
+			}
+		}
+		if (activeServers <= 1) {
+			return;
+		}
+
+		int cnt = 0;
 		for (Server server : servers) {
 			if (server.name.startsWith("node") && !server.name.equals("node01") && server.isActive()) {
 				try {
