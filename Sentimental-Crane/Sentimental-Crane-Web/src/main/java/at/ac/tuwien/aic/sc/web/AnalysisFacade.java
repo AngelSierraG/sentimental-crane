@@ -72,7 +72,7 @@ public class AnalysisFacade {
 
 		int sum = 0;
 		double sentimental = 0;
-		int timeout = 22222;
+		int timeout = 34567;
 		for (Future<AnalysisResult> future : futures) {
 			try {
 				AnalysisResult result = future.get(timeout, TimeUnit.MILLISECONDS);

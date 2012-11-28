@@ -28,15 +28,14 @@ public class ClusterManager {
 	public static final String TENANT_ID = "cfa61aed5c0a4d6bb10d111e63a3337c";
 	public static final String USERNAME = "aic12w02";
 	public static final String PASSWORD = "Vu6Sotee";
-	private static int ID = new Random().nextInt(9990) + 10;
+	public static final int CLUSTER_SIZE = 8;
+	static final String BASE_URL = "http://openstack.infosys.tuwien.ac.at";
+	static final String IMAGE_ID = "0e778831-6983-435d-bbb8-85935792cec1";
+	static final String FLAVOR_ID = "1";
+	static int ID = new Random().nextInt(9990) + 10;
 
 	@Inject
 	private Event<ServerInstanceChangeEvent> changeEvent;
-
-	public static void main(String[] args) {
-		ClusterManager cm = new ClusterManager();
-		cm.startClusterNodes(1);
-	}
 
 	private void listImages() {
 		Client client = getClient();
@@ -55,27 +54,31 @@ public class ClusterManager {
 	}
 
 	@Asynchronous
-	public void startClusterNodes(final int n) {
-		if (n <= 0) {
-			return;
-		}
-
-		ServerCreate serverCreate = new ServerCreate();
-		serverCreate.server.name = "node" + (ID++);
-		serverCreate.server.flavorRef = "1";
-		serverCreate.server.imageRef = "http://openstack.infosys.tuwien.ac.at/"+TENANT_ID+"/images/fc5f3db2-6430-4875-8955-2a86eb1a8699";
-
-		String request = "{\n" +
-				"    \"server\": {\n" +
-				"        \"flavorRef\": \""+serverCreate.server.flavorRef+"\",\n" +
-				"        \"imageRef\": \""+serverCreate.server.imageRef+"\",\n" +
-				"        \"name\": \"node03\"" +
-				"    }\n" +
-				"}";
+	public void startClusterNodes(int n) {
+		n = Math.max(0, Math.min(CLUSTER_SIZE, n));
 
 		Client client = getClient();
-		client.resource(getUrl("2", TENANT_ID, "servers"))
-				.type(APPLICATION_JSON_TYPE).post(request);
+		for (int i = 0; i < n; i++) {
+			ServerCreate serverCreate = new ServerCreate();
+			serverCreate.server.name = "node" + (ID++);
+			serverCreate.server.flavorRef = FLAVOR_ID;
+			serverCreate.server.imageRef = BASE_URL + "/" + TENANT_ID + "/images/" + IMAGE_ID;
+
+			String request = "{\n" +
+					"    \"server\": {\n" +
+					"        \"flavorRef\": \"" + serverCreate.server.flavorRef + "\",\n" +
+					"        \"imageRef\": \"" + serverCreate.server.imageRef + "\",\n" +
+					"        \"name\": \"" + serverCreate.server.name + "\"" +
+					"    }\n" +
+					"}";
+
+			try {
+				client.resource(getUrl("2", TENANT_ID, "servers"))
+						.type(APPLICATION_JSON_TYPE).post(request);
+			} catch (Exception e) {
+				logger.log(Level.WARNING, "Error occurred while starting server.", e);
+			}
+		}
 		client.destroy();
 	}
 
@@ -142,7 +145,7 @@ public class ClusterManager {
 
 	private void terminate(Server server) {
 		Client client = getClient();
-		client.resource(getUrl("2", TENANT_ID, "servers", server.id, "action"))
+		client.resource(getUrl("2", TENANT_ID, "servers", server.id))
 				.type(APPLICATION_JSON_TYPE).delete();
 		client.destroy();
 	}
@@ -197,9 +200,9 @@ public class ClusterManager {
 	private String getUrl(String version, String... paths) {
 		StringBuilder url = new StringBuilder();
 		if (version.equals("2.0")) {
-			url.append("http://openstack.infosys.tuwien.ac.at:5000/v2.0");
+			url.append(BASE_URL + ":5000/v2.0");
 		} else if (version.equals("2")) {
-			url.append("http://openstack.infosys.tuwien.ac.at:8774/v2");
+			url.append(BASE_URL + ":8774/v2");
 		} else {
 			throw new IllegalArgumentException("API version " + version + " not supported.");
 		}

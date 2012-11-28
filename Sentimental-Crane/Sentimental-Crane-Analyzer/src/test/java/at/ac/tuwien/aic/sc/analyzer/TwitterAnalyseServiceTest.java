@@ -12,7 +12,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -53,7 +52,7 @@ public class TwitterAnalyseServiceTest {
 
 		Company company = new Company("Google");
 		AnalysisResult analyse = service.analyse(company, new Date(), new Date());
-		assertEquals(0d, analyse.getResult(), 0);
+		assertEquals(0.5, analyse.getResult(), 0);
 		assertEquals(0, analyse.getNumberOfTweets());
 	}
 
@@ -85,7 +84,7 @@ public class TwitterAnalyseServiceTest {
 
 		Company company = new Company("Google");
 		AnalysisResult analyse = service.analyse(company, new Date(0), new Date(Long.MAX_VALUE));
-		assertEquals(true, analyse.getResult() < 0);
+		assertEquals(0, analyse.getResult(), 0);
 		assertEquals(1, analyse.getNumberOfTweets());
 	}
 
@@ -101,7 +100,7 @@ public class TwitterAnalyseServiceTest {
 
 		Company company = new Company("Google");
 		AnalysisResult analyse = service.analyse(company, new Date(0), new Date(Long.MAX_VALUE));
-		assertEquals(0, analyse.getResult(), 0);
+		assertEquals(0.5, analyse.getResult(), 0);
 		assertEquals(0, analyse.getNumberOfTweets());
 
 	}
@@ -117,7 +116,7 @@ public class TwitterAnalyseServiceTest {
 
 		Company company = new Company("Google");
 		AnalysisResult analyse = service.analyse(company, new Date(0), new Date(Long.MAX_VALUE));
-		assertEquals(true, analyse.getResult() < 0);
+		assertEquals(0, analyse.getResult(), 0);
 		assertEquals(1, analyse.getNumberOfTweets());
 	}
 
@@ -138,7 +137,7 @@ public class TwitterAnalyseServiceTest {
 		Company company = new Company("Google");
 		AnalysisResult analyse = service.analyse(company, new Date(0), new Date(Long.MAX_VALUE));
 		assertEquals(true, analyse.getResult() > 0);
-		assertEquals(4, analyse.getNumberOfTweets());
+		assertEquals(3, analyse.getNumberOfTweets());
 	}
 
 	@Test
@@ -153,45 +152,48 @@ public class TwitterAnalyseServiceTest {
 		Connection connection = dataSource.getConnection();
 
 		try {
-			insert(connection, "Google", true);
+			String GOOD = "cool";
+			String BAD = "bad";
+
+			insert(connection, "Google", GOOD);
 			analysis = service.analyse(company, new Date(0), new Date(Long.MAX_VALUE));
 			assertEquals(1, analysis.getResult(), 0);
 
-			insert(connection, "Google", true);
+			insert(connection, "Google", GOOD);
 			analysis = service.analyse(company, new Date(0), new Date(Long.MAX_VALUE));
 			assertEquals(1, analysis.getResult(), 0);
 
-			insert(connection, "Google", false);
+			insert(connection, "Google", BAD);
 			analysis = service.analyse(company, new Date(0), new Date(Long.MAX_VALUE));
-			assertEquals(1.0 / 3, analysis.getResult(), delta);
+			assertEquals(2.0 / 3, analysis.getResult(), delta);
 
-			insert(connection, "Google", false);
+			insert(connection, "Google", BAD);
 			analysis = service.analyse(company, new Date(0), new Date(Long.MAX_VALUE));
-			assertEquals(0, analysis.getResult(), 0);
+			assertEquals(0.5, analysis.getResult(), 0);
 
 			for (int i = 0; i < 6; i++) {
-				insert(connection, "Google", true);
-			}
-			analysis = service.analyse(company, new Date(0), new Date(Long.MAX_VALUE));
-			assertEquals(0.6, analysis.getResult(), delta);
-
-			for (int i = 0; i < 10; i++) {
-				insert(connection, "Google", true);
+				insert(connection, "Google", GOOD);
 			}
 			analysis = service.analyse(company, new Date(0), new Date(Long.MAX_VALUE));
 			assertEquals(0.8, analysis.getResult(), delta);
 
-			for (int i = 0; i < 20; i++) {
-				insert(connection, "Google", true);
+			for (int i = 0; i < 10; i++) {
+				insert(connection, "Google", GOOD);
 			}
 			analysis = service.analyse(company, new Date(0), new Date(Long.MAX_VALUE));
 			assertEquals(0.9, analysis.getResult(), delta);
 
-			for (int i = 0; i < 40; i++) {
-				insert(connection, "Google", true);
+			for (int i = 0; i < 20; i++) {
+				insert(connection, "Google", GOOD);
 			}
 			analysis = service.analyse(company, new Date(0), new Date(Long.MAX_VALUE));
 			assertEquals(0.95, analysis.getResult(), delta);
+
+			for (int i = 0; i < 40; i++) {
+				insert(connection, "Google", GOOD);
+			}
+			analysis = service.analyse(company, new Date(0), new Date(Long.MAX_VALUE));
+			assertEquals(0.975, analysis.getResult(), delta);
 
 		} finally {
 			connection.close();
@@ -200,7 +202,7 @@ public class TwitterAnalyseServiceTest {
 
 	void insert(Connection connection, String company, boolean good) throws SQLException {
 		List<String> words = good ? DICTIONARY_SERVICE.getGoodWords() : DICTIONARY_SERVICE.getBadWords();
-		insert(connection, company, words.get(new Random().nextInt(words.size())));
+		insert(connection, company, words.get(0));
 	}
 
 	void insert(Connection connection, String company, String word) throws SQLException {
