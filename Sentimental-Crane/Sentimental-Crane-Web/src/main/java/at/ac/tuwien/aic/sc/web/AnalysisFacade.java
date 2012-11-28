@@ -70,13 +70,15 @@ public class AnalysisFacade {
 
 		int sum = 0;
 		double sentimental = 0;
+		int timeout = 20000;
 		for (Future<AnalysisResult> future : futures) {
 			try {
-				AnalysisResult result = future.get(20, TimeUnit.SECONDS);
+				AnalysisResult result = future.get(timeout, TimeUnit.MILLISECONDS);
 				sum += result.getNumberOfTweets();
 				sentimental += (result.getResult() * result.getNumberOfTweets());
 			} catch (TimeoutException ex) {
 				//fail silent
+				timeout = 10;
 			} catch (InterruptedException ex) {
 				ex.printStackTrace();
 			} catch (ExecutionException ex) {

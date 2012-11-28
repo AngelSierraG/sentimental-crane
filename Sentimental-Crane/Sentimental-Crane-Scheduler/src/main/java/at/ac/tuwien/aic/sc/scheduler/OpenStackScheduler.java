@@ -22,7 +22,7 @@ public class OpenStackScheduler {
 
 	Date lastAnalysisDate = null;
 
-	int idletime = 20;
+	int idleTime = 60;
 
 	public OpenStackScheduler() {
 	}
@@ -42,7 +42,7 @@ public class OpenStackScheduler {
 
 	@Schedule(second = "*/20", minute = "*", hour = "*", persistent = false)
 	public void run() {
-		if (lastAnalysisDate != null && (TimeUnit.MILLISECONDS.toSeconds(new Date().getTime() - lastAnalysisDate.getTime()) > idletime)) {
+		if (lastAnalysisDate != null && (TimeUnit.MILLISECONDS.toSeconds(new Date().getTime() - lastAnalysisDate.getTime()) > idleTime)) {
 			clusterManager.shutdownClusterNodes(1);
 		}
 	}

@@ -37,7 +37,7 @@ public class OpenStackSchedulerTest {
 	public void testShutdownSchedule() {
 		scheduler.clusterManager.startClusterNodes(8);
 		scheduler.lastAnalysisDate = new Date();
-		scheduler.idletime = -1;
+		scheduler.idleTime = -1;
 		scheduler.run();
 		assertEquals(7, scheduler.clusterManager.getNumberOfRunningNodes());
 	}
@@ -46,7 +46,7 @@ public class OpenStackSchedulerTest {
 	public void testMultipleShutdown(){
 		scheduler.clusterManager.startClusterNodes(8);
 		scheduler.lastAnalysisDate = new Date();
-		scheduler.idletime = -1;
+		scheduler.idleTime = -1;
 		scheduler.run();
 		scheduler.run();
 		scheduler.run();
