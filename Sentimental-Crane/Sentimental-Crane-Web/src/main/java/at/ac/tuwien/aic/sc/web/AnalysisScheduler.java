@@ -12,7 +12,6 @@ import javax.naming.InitialContext;
 import java.util.Date;
 import java.util.Properties;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -39,11 +38,7 @@ public class AnalysisScheduler {
 		}
 
 
-		long days = TimeUnit.MILLISECONDS.toDays(to.getTime() - from.getTime());
 		AnalysisResult partialResult = service.analyse(company, from, to);
-
-		AnalysisResult result = days == 1 ? partialResult
-				: new AnalysisResult(partialResult.getResult() / days, partialResult.getNumberOfTweets());
-		return new AsyncResult<AnalysisResult>(result);
+		return new AsyncResult<AnalysisResult>(partialResult);
 	}
 }

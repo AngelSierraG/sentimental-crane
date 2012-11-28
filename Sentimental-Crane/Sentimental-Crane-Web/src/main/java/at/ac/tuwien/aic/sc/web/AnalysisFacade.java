@@ -54,7 +54,7 @@ public class AnalysisFacade {
 		AnalysisStartEvent e = new AnalysisStartEvent(company.getName(), from, to);
 		startBus.fire(e);
 		try {
-			Thread.sleep(5000);
+			Thread.sleep(7000);
 		} catch (InterruptedException ex) {
 			logger.log(Level.WARNING, "Load balancing interrupted", ex);
 		}
@@ -64,16 +64,21 @@ public class AnalysisFacade {
 		int hours = Math.max(24, (int) TimeUnit.MILLISECONDS.toHours(to.getTime() - from.getTime())) / 8;
 		List<Future<AnalysisResult>> futures = new ArrayList<Future<AnalysisResult>>();
 		for (int i = 0; i < 8; i++) {
-			Future<AnalysisResult> result = analysisScheduler.schedule(company, addHours(from, i * hours), addHours(from, i * hours + hours));
+			Date dateStart = addHours(from, i * hours);
+			Date dateEnd = addHours(from, i * hours + hours);
+			Future<AnalysisResult> result = analysisScheduler.schedule(company, dateStart, dateEnd);
 			futures.add(result);
 		}
 
 		int sum = 0;
 		double sentimental = 0;
-		int timeout = 20000;
+		int timeout = 22222;
 		for (Future<AnalysisResult> future : futures) {
 			try {
 				AnalysisResult result = future.get(timeout, TimeUnit.MILLISECONDS);
+				if (Double.isInfinite(result.getResult()) || Double.isNaN(result.getResult())) {
+					continue;
+				}
 				sum += result.getNumberOfTweets();
 				sentimental += (result.getResult() * result.getNumberOfTweets());
 			} catch (TimeoutException ex) {
@@ -87,6 +92,7 @@ public class AnalysisFacade {
 		}
 
 		endBus.fire(new AnalysisEndEvent(e.getEventId()));
+		logger.info("Finished " + company + ": " + sentimental + " (" + sum + ")");
 		return new AsyncResult<Double>(sum != 0 ? sentimental / sum : 0.5);
 	}
 
