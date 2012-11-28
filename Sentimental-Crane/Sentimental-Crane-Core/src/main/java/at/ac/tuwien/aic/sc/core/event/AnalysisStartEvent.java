@@ -15,11 +15,14 @@ public class AnalysisStartEvent {
 
 	private Date to;
 
+	private Date eventDate;
+
 	public AnalysisStartEvent(String companyName, Date from, Date to) {
 		this.companyName = companyName;
 		this.from = from;
 		this.to = to;
 		this.eventId = UUID.randomUUID().toString();
+		this.eventDate=new Date();
 	}
 
 	public String getEventId() {
@@ -36,5 +39,9 @@ public class AnalysisStartEvent {
 
 	public Date getTo() {
 		return to;
+	}
+
+	public Date getEventDate() {
+		return eventDate;
 	}
 }
