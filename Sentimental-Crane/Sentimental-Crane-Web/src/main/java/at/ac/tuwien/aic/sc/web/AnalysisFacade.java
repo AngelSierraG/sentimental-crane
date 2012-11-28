@@ -5,6 +5,7 @@ import at.ac.tuwien.aic.sc.core.entities.Company;
 import at.ac.tuwien.aic.sc.core.event.AnalysisEndEvent;
 import at.ac.tuwien.aic.sc.core.event.AnalysisStartEvent;
 import at.ac.tuwien.aic.sc.core.event.ServerInstanceChangeEvent;
+import org.apache.commons.lang3.time.DateUtils;
 
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
@@ -24,6 +25,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static org.apache.commons.lang3.time.DateUtils.addDays;
+import static org.apache.commons.lang3.time.DateUtils.addHours;
 
 /**
  * @author Dominik Strasser, dominikstr@gmail.com
@@ -33,13 +35,13 @@ public class AnalysisFacade {
 	private static final Logger logger = Logger.getLogger(AnalysisFacade.class.getName());
 
 	@EJB
-	private AnalysisScheduler analysisScheduler;
+	AnalysisScheduler analysisScheduler;
 
 	@Inject
-	private Event<AnalysisStartEvent> startBus;
+	Event<AnalysisStartEvent> startBus;
 
 	@Inject
-	private Event<AnalysisEndEvent> endBus;
+	Event<AnalysisEndEvent> endBus;
 
 	private Integer serversOnline = 0;
 
@@ -58,10 +60,11 @@ public class AnalysisFacade {
 		}
 
 		//start analysis in background
-		int days = Math.max(1, (int) TimeUnit.MILLISECONDS.toDays(to.getTime() - from.getTime()));
-		List<Future<AnalysisResult>> futures = new ArrayList<Future<AnalysisResult>>(days);
-		for (int i = 0; i < days; i++) {
-			Future<AnalysisResult> result = analysisScheduler.schedule(company, addDays(from, i), addDays(from, i + 1));
+		to=DateUtils.setHours(to,12);
+		int hours = Math.max(24, (int) TimeUnit.MILLISECONDS.toHours(to.getTime() - from.getTime())) / 8;
+		List<Future<AnalysisResult>> futures = new ArrayList<Future<AnalysisResult>>();
+		for (int i = 0; i < 8; i++) {
+			Future<AnalysisResult> result = analysisScheduler.schedule(company, addHours(from, i * hours), addHours(from, i * hours + hours));
 			futures.add(result);
 		}
 
