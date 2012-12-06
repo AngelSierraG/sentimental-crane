@@ -18,7 +18,7 @@
 		<module>Sentimental-Crane-Analyzer</module>
 		<module>Sentimental-Crane-Core</module>
 		<module>Sentimental-Crane-Loader</module>
-		<module>Sentimental-Crane-Scheduler</module>
+		<!-- <module>Sentimental-Crane-Scheduler</module> -->
 		<module>Sentimental-Crane-Web</module>
 	</modules>
 
