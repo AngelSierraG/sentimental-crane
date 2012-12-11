@@ -18,9 +18,21 @@
 		<module>Sentimental-Crane-Analyzer</module>
 		<module>Sentimental-Crane-Core</module>
 		<module>Sentimental-Crane-Loader</module>
-		<!-- <module>Sentimental-Crane-Scheduler</module> -->
+		<module>Sentimental-Crane-Scheduler</module> 
 		<module>Sentimental-Crane-Web</module>
 	</modules>
+
+    <profiles>
+        <profile>
+            <id>stage1</id>
+        </profile>
+        <profile>
+            <id>stage2</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+    </profiles>
 
 
 	<dependencies>
