@@ -1,0 +1,7 @@
+<backends>
+ <backend name="analyzer">
+   <options>
+     <dynamic>true</dynamic>
+   </options>
+ </backend>
+</backends>
