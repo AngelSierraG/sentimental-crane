@@ -13,6 +13,13 @@ import javax.annotation.Resource;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.sql.DataSource;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,6 +33,7 @@ import java.util.logging.Logger;
 /**
  * @author Dominik Strasser, dominikstr@gmail.com
  */
+@Path("/analyse")
 @Stateless
 @Remote(AnalysisService.class)
 @Clustered
@@ -42,6 +50,19 @@ public class TwitterAnalyseService implements AnalysisService {
 		System.out.println("Starting up service");
 		dictionaryService = DictionaryService.getInstance();
 	}
+
+	@POST
+	@Produces(MediaType.APPLICATION_XML)
+	@Consumes(MediaType.APPLICATION_XML)
+	public AnalysisResult analyse(
+			Company company, 
+			@QueryParam("from") long from, 
+			@QueryParam("to") long to) {
+		Date fromDate = new Date(from);
+		Date toDate = new Date(to);
+		return analyse(company, fromDate, toDate);
+	}
+	
 
 	@Override
 	public AnalysisResult analyse(Company company, Date from, Date to) {

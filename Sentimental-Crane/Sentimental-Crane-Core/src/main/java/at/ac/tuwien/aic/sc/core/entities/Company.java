@@ -1,6 +1,8 @@
 package at.ac.tuwien.aic.sc.core.entities;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -8,6 +10,7 @@ import java.util.List;
  * @author Dominik Strasser, dominikstr@gmail.com
  */
 @Entity
+@XmlRootElement
 public class Company implements Serializable {
 	@Id
 	@GeneratedValue

@@ -2,6 +2,9 @@ package at.ac.tuwien.aic.sc.core;
 
 import java.io.Serializable;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 public class AnalysisResult implements Serializable{
 	double result;
 	int numberOfTweets;
