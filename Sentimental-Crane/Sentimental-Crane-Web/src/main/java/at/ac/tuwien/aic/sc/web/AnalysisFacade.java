@@ -7,8 +7,6 @@ import at.ac.tuwien.aic.sc.core.event.AnalysisStartEvent;
 import at.ac.tuwien.aic.sc.core.event.ServerInstanceChangeEvent;
 import org.apache.commons.lang3.time.DateUtils;
 
-import javax.ejb.AsyncResult;
-import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.enterprise.context.ApplicationScoped;
@@ -46,8 +44,8 @@ public class AnalysisFacade {
 
 	private Integer serversOnline = 0;
 
-	@Asynchronous
-	public Future<Double> analyse(Company company, Date from, Date to) {
+	//@Asynchronous
+	public Double analyse(Company company, Date from, Date to) {
 		if (company == null)
 			throw new IllegalArgumentException("Company hasn't to be null");
 
@@ -94,7 +92,9 @@ public class AnalysisFacade {
 
 		endBus.fire(new AnalysisEndEvent(e.getEventId()));
 		logger.info("Finished " + company + ": " + sentimental + " (" + sum + ")");
-		return new AsyncResult<Double>(sum != 0 ? sentimental / sum : 0.5);
+		double result = sum != 0 ? sentimental / sum : 0.5;
+		//return new AsyncResult<Double>(result);
+		return result;
 	}
 
 	public Integer getNumberOfInstances() {

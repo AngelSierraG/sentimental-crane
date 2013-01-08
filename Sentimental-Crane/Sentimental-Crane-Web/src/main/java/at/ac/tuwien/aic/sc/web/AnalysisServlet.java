@@ -1,9 +1,12 @@
 package at.ac.tuwien.aic.sc.web;
 
 import at.ac.tuwien.aic.sc.core.entities.Company;
+import org.jboss.weld.environment.se.Weld;
+import org.jboss.weld.environment.se.WeldContainer;
 
 import javax.ejb.EJB;
 import javax.inject.Inject;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +35,16 @@ public class AnalysisServlet extends HttpServlet {
 	@EJB
 	private AnalysisFacade facade;
 
+	@Override
+	public void init(ServletConfig servletConfig) throws ServletException {
+		super.init(servletConfig);
+
+		System.err.println("Attempting to create weld");
+		WeldContainer weld = new Weld().initialize();
+		System.err.println("Hello weld");
+		this.facade = weld.instance().select(AnalysisFacade.class).get();
+		System.err.println("Hello facade " + facade);
+	}
 
 	@Override
 	protected void doPost(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
@@ -72,19 +85,26 @@ public class AnalysisServlet extends HttpServlet {
 			}
 		} else {
 			if (session.getAttribute(CURRENT_REQUEST) != null) {
-				Future<Double> analysis = (Future<Double>) session.getAttribute(CURRENT_REQUEST);
-				if (analysis.isDone()) {
-					try {
-						response.getWriter().println(DECIMAL_FORMAT.format(analysis.get()));
-						session.removeAttribute(CURRENT_REQUEST);
-					} catch (Exception e) {
-						logger.log(Level.SEVERE, "Error fetching result", e);
-						response.setStatus(500);
-						response.getWriter().println("!!! Error !!!");
-						session.removeAttribute(CURRENT_REQUEST);
+				Object obj = session.getAttribute(CURRENT_REQUEST);
+				if (obj instanceof Future) {
+					Future<Double> analysis = (Future<Double>) session.getAttribute(CURRENT_REQUEST);
+					if (analysis.isDone()) {
+						try {
+							response.getWriter().println(DECIMAL_FORMAT.format(analysis.get()));
+							session.removeAttribute(CURRENT_REQUEST);
+						} catch (Exception e) {
+							logger.log(Level.SEVERE, "Error fetching result", e);
+							response.setStatus(500);
+							response.getWriter().println("!!! Error !!!");
+							session.removeAttribute(CURRENT_REQUEST);
+						}
+					} else {
+						response.getWriter().println("Computing...");
 					}
 				} else {
-					response.getWriter().println("Computing...");
+					double value = (Double) obj;
+					response.getWriter().println(DECIMAL_FORMAT.format(value));
+					session.removeAttribute(CURRENT_REQUEST);
 				}
 			} else {
 				response.getWriter().println("Nothing to do");

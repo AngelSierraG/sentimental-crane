@@ -14,12 +14,12 @@ import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.enterprise.context.ApplicationScoped;
 import javax.sql.DataSource;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -30,7 +30,7 @@ import java.util.logging.Logger;
  * @author Dominik Strasser, dominikstr@gmail.com
  */
 @ApplicationScoped
-@Path("/analyse")
+//@Path("/analyse")
 @Stateless
 @Remote(AnalysisService.class)
 @Clustered
@@ -43,9 +43,16 @@ public class TwitterAnalyseService implements AnalysisService {
 	DictionaryService dictionaryService;
 
 	@PostConstruct
-	public void start() {
+	public void start() throws SQLException, ClassNotFoundException {
 		System.out.println("Starting up service");
 		dictionaryService = DictionaryService.getInstance();
+
+		System.out.println("DataSource is " + dataSource);
+		if (dataSource == null) {
+			System.err.println("Attempting to create connection");
+			Class.forName("com.google.appengine.api.rdbms.AppEngineDriver");
+			System.err.println("Driver loaded");
+		}
 	}
 
 	@POST
@@ -78,7 +85,7 @@ public class TwitterAnalyseService implements AnalysisService {
 		}
 
 		try {
-			Connection connection = dataSource.getConnection();
+			Connection connection = getConnection();
 			PreparedStatement statement = connection.prepareStatement("SELECT text FROM tweet WHERE tweet_date BETWEEN ? AND ?");
 			try {
 				statement.setDate(1, new java.sql.Date(from.getTime()));
@@ -139,6 +146,13 @@ public class TwitterAnalyseService implements AnalysisService {
 			logger.log(Level.SEVERE, "Error occurred while fetching data from database", e);
 			throw new RuntimeException(e);
 		}
+	}
+
+	private Connection getConnection() throws SQLException {
+		if (dataSource == null) {
+			return DriverManager.getConnection("jdbc:google:rdbms://sentimentalcrane-db:sentimentalcranedb/sentimentalcranedb");
+		}
+		return dataSource.getConnection();
 	}
 
 	private List<String> companyString(String name) {

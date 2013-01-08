@@ -34,6 +34,15 @@
             <groupId>at.ac.tuwien.aic.sc</groupId>
             <artifactId>sentimental-crane-core</artifactId>
         </dependency>
+		<dependency>
+			<groupId>at.ac.tuwien.aic.sc</groupId>
+			<artifactId>Sentimental-Crane-Analyzer</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.appengine</groupId>
+			<artifactId>appengine-api-1.0-sdk</artifactId>
+		</dependency>
+
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>

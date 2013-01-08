@@ -237,7 +237,7 @@
     <div class="navbar-inner">
         <div class="container">
             Active instances
-            <script>
+            <!--
                 function pollActiveInstances() {
                     $.post('server-status', function(data) {
                         $('#activeInstances').text(data);
@@ -248,8 +248,8 @@
                 $(document).ready(function() {
                     pollActiveInstances();
                 });
-            </script>
-            <span id="activeInstances"></span>
+            -->
+            <span id="activeInstances">1</span>
         </div>
     </div>
 </div>

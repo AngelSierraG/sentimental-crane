@@ -1,16 +1,13 @@
 package at.ac.tuwien.aic.sc.analyzer;
 
-import javax.management.ObjectName;
-import java.lang.management.ManagementFactory;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 //@Singleton
 //@Startup
-public class DictionaryService implements ConfigurableDictionaryServiceMXBean {
+public class DictionaryService /*implements ConfigurableDictionaryServiceMXBean*/ {
 	private static final Logger logger = Logger.getLogger(DictionaryService.class.getName());
 	private static DictionaryService instance;
 
@@ -18,7 +15,7 @@ public class DictionaryService implements ConfigurableDictionaryServiceMXBean {
 	List<String> badWords;
 	List<String> stopWords;
 
-	ObjectName name = null;
+//	ObjectName name = null;
 
 	public static DictionaryService getInstance() {
 		if (instance == null) {
@@ -37,6 +34,7 @@ public class DictionaryService implements ConfigurableDictionaryServiceMXBean {
 		goodWords = Arrays.asList(GOOD_WORDS);
 		badWords = Arrays.asList(BAD_WORDS);
 		stopWords = Arrays.asList(STOP_WORDS);
+		/*
 		try {
 			name = new ObjectName("at.ac.tuwien.aic.sc.analyzer:type=DictionaryService");
 			ManagementFactory.getPlatformMBeanServer().registerMBean(this, name);
@@ -44,9 +42,11 @@ public class DictionaryService implements ConfigurableDictionaryServiceMXBean {
 		} catch (Exception e) {
 			logger.log(Level.WARNING, "Error registering service", e);
 		}
+		*/
 	}
 
 	// @PreDestroy
+	/*
 	public void removeFromJMX() {
 		try {
 			ManagementFactory.getPlatformMBeanServer().unregisterMBean(name);
@@ -54,6 +54,7 @@ public class DictionaryService implements ConfigurableDictionaryServiceMXBean {
 			logger.log(Level.WARNING, "Error unregistering service", e);
 		}
 	}
+	*/
 
 	public List<String> getGoodWords() {
 		return Collections.unmodifiableList(goodWords);
@@ -67,17 +68,17 @@ public class DictionaryService implements ConfigurableDictionaryServiceMXBean {
 		return Collections.unmodifiableList(stopWords);
 	}
 
-	@Override
+	//@Override
 	public void addGoodWord(String goodWord) {
 		addIfNotExists(goodWords, goodWord);
 	}
 
-	@Override
+	//@Override
 	public void addBadWord(String badWord) {
 		addIfNotExists(badWords, badWord);
 	}
 
-	@Override
+	//@Override
 	public void addStopWord(String stopWord) {
 		addIfNotExists(stopWords, stopWord);
 	}
@@ -88,17 +89,17 @@ public class DictionaryService implements ConfigurableDictionaryServiceMXBean {
 		}
 	}
 
-	@Override
+	//@Override
 	public void clearGoodWords() {
 		goodWords.clear();
 	}
 
-	@Override
+	//@Override
 	public void clearBadWords() {
 		badWords.clear();
 	}
 
-	@Override
+	//@Override
 	public void clearStopWords() {
 		stopWords.clear();
 	}
