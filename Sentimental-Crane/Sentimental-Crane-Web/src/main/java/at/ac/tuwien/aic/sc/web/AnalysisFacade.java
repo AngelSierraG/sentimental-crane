@@ -11,6 +11,7 @@ import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -24,16 +25,16 @@ import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.apache.commons.lang3.time.DateUtils.addDays;
 import static org.apache.commons.lang3.time.DateUtils.addHours;
 
 /**
  * @author Dominik Strasser, dominikstr@gmail.com
  */
+@ApplicationScoped
 @Stateless
 public class AnalysisFacade {
 	private static final Logger logger = Logger.getLogger(AnalysisFacade.class.getName());
-
+	@Inject
 	@EJB
 	AnalysisScheduler analysisScheduler;
 

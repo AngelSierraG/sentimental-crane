@@ -3,6 +3,7 @@ package at.ac.tuwien.aic.sc.web;
 import at.ac.tuwien.aic.sc.core.entities.Company;
 
 import javax.ejb.EJB;
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +21,6 @@ import java.util.logging.Logger;
 
 /**
  * @author Dominik Strasser, dominikstr@gmail.com
- * @editor Kamil El-Isa, elisa.kamil@gmail.com
  */
 public class AnalysisServlet extends HttpServlet {
 	private static final String CURRENT_REQUEST = "CURRENT REQUEST";
@@ -28,7 +28,7 @@ public class AnalysisServlet extends HttpServlet {
 	private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.#######");
 
 	private static final Logger logger = Logger.getLogger(AnalysisServlet.class.getName());
-
+	@Inject
 	@EJB
 	private AnalysisFacade facade;
 

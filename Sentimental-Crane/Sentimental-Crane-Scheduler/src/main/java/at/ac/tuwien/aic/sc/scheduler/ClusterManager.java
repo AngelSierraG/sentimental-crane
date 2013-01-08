@@ -8,6 +8,7 @@ import com.sun.jersey.api.client.filter.ClientFilter;
 import javax.ejb.Asynchronous;
 import javax.ejb.Schedule;
 import javax.ejb.Stateless;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import java.util.List;
@@ -22,6 +23,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_XML_TYPE;
  * @author Dominik Strasser, dominikstr@gmail.com
  * @author Gregor Schauer
  */
+@ApplicationScoped
 @Stateless
 public class ClusterManager {
 	private static final Logger logger = Logger.getLogger(ClusterManager.class.getName());

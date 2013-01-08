@@ -1,6 +1,7 @@
 package at.ac.tuwien.aic.sc.web;
 
 import javax.ejb.EJB;
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -12,7 +13,7 @@ import java.io.IOException;
  */
 public class ServerStatusServlet extends HttpServlet {
 	private static final long serialVersionUID = -2688112882339771985L;
-
+	@Inject
 	@EJB
 	private AnalysisFacade facade;
 
@@ -23,6 +24,7 @@ public class ServerStatusServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.getWriter().println(facade.getNumberOfInstances().toString());
+		response.getWriter().println("1");
+		// response.getWriter().println(facade.getNumberOfInstances().toString());
 	}
 }

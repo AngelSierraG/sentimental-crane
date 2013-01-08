@@ -3,17 +3,16 @@ package at.ac.tuwien.aic.sc.web;
 import at.ac.tuwien.aic.sc.core.AnalysisResult;
 import at.ac.tuwien.aic.sc.core.AnalysisService;
 import at.ac.tuwien.aic.sc.core.entities.Company;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.WebResource;
 
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
+import javax.enterprise.context.ApplicationScoped;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.ws.rs.core.MediaType;
-
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource;
-
 import java.util.Date;
 import java.util.Properties;
 import java.util.concurrent.Future;
@@ -23,6 +22,7 @@ import java.util.logging.Logger;
 /**
  * @author Gregor Schauer
  */
+@ApplicationScoped
 @Stateless
 public class AnalysisScheduler {
 	private static final Logger logger = Logger.getLogger(AnalysisFacade.class.getName());

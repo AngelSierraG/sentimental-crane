@@ -8,6 +8,7 @@ import javax.ejb.EJB;
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.enterprise.event.Observes;
+import javax.inject.Inject;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,6 +23,7 @@ import java.util.logging.Logger;
 public class OpenStackScheduler {
 	static final Logger logger = Logger.getLogger(OpenStackScheduler.class.getName());
 	@EJB
+	@Inject
 	ClusterManager clusterManager;
 
 	private Map<String, AnalysisStartEvent> startEvents = new ConcurrentHashMap<String, AnalysisStartEvent>();
