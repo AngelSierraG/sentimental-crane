@@ -39,11 +39,8 @@ public class AnalysisServlet extends HttpServlet {
 	public void init(ServletConfig servletConfig) throws ServletException {
 		super.init(servletConfig);
 
-		System.err.println("Attempting to create weld");
 		WeldContainer weld = new Weld().initialize();
-		System.err.println("Hello weld");
 		this.facade = weld.instance().select(AnalysisFacade.class).get();
-		System.err.println("Hello facade " + facade);
 	}
 
 	@Override

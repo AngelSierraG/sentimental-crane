@@ -44,14 +44,10 @@ public class TwitterAnalyseService implements AnalysisService {
 
 	@PostConstruct
 	public void start() throws SQLException, ClassNotFoundException {
-		System.out.println("Starting up service");
 		dictionaryService = DictionaryService.getInstance();
 
-		System.out.println("DataSource is " + dataSource);
 		if (dataSource == null) {
-			System.err.println("Attempting to create connection");
 			Class.forName("com.google.appengine.api.rdbms.AppEngineDriver");
-			System.err.println("Driver loaded");
 		}
 	}
 
