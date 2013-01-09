@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <setting name="cacheEnabled" value="true"/>
+    </settings>
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="UNPOOLED">
+                <property name="driver" value="org.postgresql.Driver"/>
+                <property name="url" value="jdbc:postgresql://dbsrv01/aicdb"/>
+                <property name="username" value="aic"/>
+                <property name="password" value="aic!db"/>
+                <property name="driver.encoding" value="UTF8" />
+            </dataSource>
+        </environment>
+    </environments>
+    <mappers>
+        <mapper class="at.ac.tuwien.aic.sc.loader.mapper.PlaceMapper"/>
+        <mapper class="at.ac.tuwien.aic.sc.loader.mapper.TweetMapper"/>
+        <mapper class="at.ac.tuwien.aic.sc.loader.mapper.UserMapper"/>
+    </mappers>
+</configuration>
