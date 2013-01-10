@@ -5,7 +5,10 @@ import at.ac.tuwien.aic.sc.loader.parser.TweetParser;
 import at.ac.tuwien.aic.sc.loader.parser.exception.JSONParseException;
 import org.apache.log4j.Logger;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -13,6 +16,7 @@ import java.util.TreeSet;
 import java.util.zip.GZIPInputStream;
 
 /**
+ * @author Bernhard Nickel
  */
 public class StatefulTweetReadingService {
     private static final Logger logger = Logger.getLogger(StatefulTweetReadingService.class);

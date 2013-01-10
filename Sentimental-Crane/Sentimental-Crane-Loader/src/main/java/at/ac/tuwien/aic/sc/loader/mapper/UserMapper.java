@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
 
 /**
+ * @author Bernhard Nickel
  */
 public interface UserMapper {
     @Select("SELECT * FROM tweet_user WHERE id = #{id}")

@@ -6,18 +6,17 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.log4j.Logger;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.net.URL;
 
 /**
+ * @author Bernhard Nickel
  */
 public class TweetInitialLoader {
     private static final Logger logger = Logger.getLogger(TweetInitialLoader.class);
 
-    public static void main (String... args) throws Exception {
+    public static void main(String... args) throws Exception {
         if (args[0] == null) {
             throw new IllegalArgumentException("args[0] = sourcefile");
         }
@@ -35,7 +34,7 @@ public class TweetInitialLoader {
                 TweetFilePreparationService service = new TweetFilePreparationService();
                 try {
                     service.prepareTweetFile(url.openStream(), tmpOut);
-                }catch (Exception e) {
+                } catch (Exception e) {
                     logger.error(e);
                 }
             }

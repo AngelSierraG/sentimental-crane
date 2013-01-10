@@ -26,6 +26,12 @@
         </profile>
         <profile>
             <id>stage2</id>
+			<dependencies>
+				<dependency>
+					<groupId>at.ac.tuwien.aic.sc</groupId>
+					<artifactId>Sentimental-Crane-Analyzer</artifactId>
+				</dependency>
+			</dependencies>
         </profile>
     </profiles>
 
@@ -35,12 +41,9 @@
             <artifactId>sentimental-crane-core</artifactId>
         </dependency>
 		<dependency>
-			<groupId>at.ac.tuwien.aic.sc</groupId>
-			<artifactId>Sentimental-Crane-Analyzer</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>com.google.appengine</groupId>
 			<artifactId>appengine-api-1.0-sdk</artifactId>
+			<version>1.7.4</version>
 		</dependency>
 
         <dependency>
@@ -55,11 +58,6 @@
             <groupId>org.jboss.ejb3</groupId>
             <artifactId>jboss-ejb3-ext-api</artifactId>
         </dependency>
-        <dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-client</artifactId>
-			<version>1.8</version>
-		</dependency>
     </dependencies>
 
 </project>

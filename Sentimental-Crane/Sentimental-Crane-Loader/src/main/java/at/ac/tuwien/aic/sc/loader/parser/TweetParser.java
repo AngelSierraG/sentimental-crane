@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 /**
+ * @author Bernhard Nickel
  */
 public class TweetParser {
     private TweetMapper tweetMapper;
@@ -20,10 +21,10 @@ public class TweetParser {
     public Tweet parse(String s) {
         JSONTokener t = new JSONTokener(s);
         try {
-            return tweetMapper.map((JSONObject)t.nextValue());
+            return tweetMapper.map((JSONObject) t.nextValue());
         } catch (JSONException e) {
             throw new JSONParseException(e);
-        } catch(JSONMappingException e) {
+        } catch (JSONMappingException e) {
             throw new JSONParseException(e);
         }
     }

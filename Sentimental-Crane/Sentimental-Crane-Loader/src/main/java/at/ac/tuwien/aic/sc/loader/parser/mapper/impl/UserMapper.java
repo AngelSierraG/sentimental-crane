@@ -2,11 +2,11 @@ package at.ac.tuwien.aic.sc.loader.parser.mapper.impl;
 
 import at.ac.tuwien.aic.sc.core.entities.User;
 import at.ac.tuwien.aic.sc.loader.parser.mapper.AbstractJSONMapper;
-import at.ac.tuwien.aic.sc.loader.parser.mapper.JSONMapper;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
+ * @author Bernhard Nickel
  */
 public class UserMapper extends AbstractJSONMapper<User> {
     @Override

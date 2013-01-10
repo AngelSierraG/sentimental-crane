@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.zip.GZIPOutputStream;
 
 /**
+ * @author Bernhard Nickel
  */
 public class TweetFilePreparationService {
     public void prepareTweetFile(InputStream in, OutputStream out) throws IOException {

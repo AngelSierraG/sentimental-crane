@@ -9,7 +9,10 @@ import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import java.util.Date;
+import java.util.Properties;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,49 +24,26 @@ import java.util.logging.Logger;
 @Stateless
 public class AnalysisScheduler {
 	private static final Logger logger = Logger.getLogger(AnalysisFacade.class.getName());
-	@Inject
-	private TwitterAnalyseService service;
-	
-	private final String URL = "http://2.sentimentalcrane.appspot.com";
+	@Inject	// TODO: change to AnalysisService
+	private TwitterAnalyseService analysisService;
 
 	@Asynchronous
 	public Future<AnalysisResult> schedule(Company company, Date from, Date to) {
-		
-		AnalysisResult partialResult = null;
-		boolean ws = true;
-
-		if(!ws){
-			/*
+		if (!EnvironmentUtils.isGoogleAppEngine()) {
 			try {
 				Properties properties = new Properties();
 				properties.put(Context.URL_PKG_PREFIXES, "org.jboss.ejb.client.naming");
 				properties.put(Context.SECURITY_PRINCIPAL, "ejb");
 				properties.put(Context.SECURITY_CREDENTIALS, "test");
 				Context ctx = new InitialContext(properties);
-				service = (AnalysisService)
-						ctx.lookup("ejb:/Sentimental-Crane-Analyzer-1.0-jar-with-dependencies/TwitterAnalyseService!at.ac.tuwien.aic.sc.core.AnalysisService");
-				
+				String name = "ejb:/Sentimental-Crane-Analyzer-1.0-jar-with-dependencies/TwitterAnalyseService!at.ac.tuwien.aic.sc.core.AnalysisService";
+				analysisService = (TwitterAnalyseService) ctx.lookup(name);		// TODO: weaken cast
 			} catch (Exception e) {
 				logger.log(Level.SEVERE, "Error in JNDI lookup", e);
 			}
-			partialResult = service.analyse(company, from, to);
-			*/
-		}else{
-			try {
-				//Get data from the server
-				//Client client = Client.create();
-				//WebResource resource = client.resource(URL+"/analyse");
-				//resource.queryParam("from", from.getTime()+"");
-				//resource.queryParam("to", to.getTime()+"");
-				//partialResult = resource.accept(MediaType.APPLICATION_XML).post(AnalysisResult.class, company);
-				partialResult = service.analyse(company, from, to);
-			} catch (Exception e) {
-				logger.log(Level.SEVERE, "Error using Restful Service", e);
-			}
 		}
 
-
+		AnalysisResult partialResult = analysisService.analyse(company, from, to);
 		return new AsyncResult<AnalysisResult>(partialResult);
 	}
-	
 }

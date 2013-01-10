@@ -6,6 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
+ * @author Bernhard Nickel
  */
 public class PlaceMapper extends AbstractJSONMapper<Place> {
     @Override

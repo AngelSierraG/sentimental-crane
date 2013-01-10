@@ -1,13 +1,14 @@
 package at.ac.tuwien.aic.sc.analyzer;
 
+import javax.management.ObjectName;
+import java.lang.management.ManagementFactory;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
-//@Singleton
-//@Startup
-public class DictionaryService /*implements ConfigurableDictionaryServiceMXBean*/ {
+public class DictionaryService implements ConfigurableDictionaryServiceMXBean {
 	private static final Logger logger = Logger.getLogger(DictionaryService.class.getName());
 	private static DictionaryService instance;
 
@@ -15,7 +16,7 @@ public class DictionaryService /*implements ConfigurableDictionaryServiceMXBean*
 	List<String> badWords;
 	List<String> stopWords;
 
-//	ObjectName name = null;
+	ObjectName name = null;
 
 	public static DictionaryService getInstance() {
 		if (instance == null) {
@@ -23,38 +24,36 @@ public class DictionaryService /*implements ConfigurableDictionaryServiceMXBean*
 				if (instance == null) {
 					instance = new DictionaryService();
 					instance.buildDefaultLists();
+					instance.registerToJMX();
 				}
 			}
 		}
 		return instance;
 	}
 
-	// @PostConstruct
 	public void buildDefaultLists() {
 		goodWords = Arrays.asList(GOOD_WORDS);
 		badWords = Arrays.asList(BAD_WORDS);
 		stopWords = Arrays.asList(STOP_WORDS);
-		/*
+	}
+
+	public void registerToJMX() {
 		try {
 			name = new ObjectName("at.ac.tuwien.aic.sc.analyzer:type=DictionaryService");
 			ManagementFactory.getPlatformMBeanServer().registerMBean(this, name);
 			logger.info("Successfully registered MBean DictionaryService");
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			logger.log(Level.WARNING, "Error registering service", e);
 		}
-		*/
 	}
 
-	// @PreDestroy
-	/*
 	public void removeFromJMX() {
 		try {
 			ManagementFactory.getPlatformMBeanServer().unregisterMBean(name);
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			logger.log(Level.WARNING, "Error unregistering service", e);
 		}
 	}
-	*/
 
 	public List<String> getGoodWords() {
 		return Collections.unmodifiableList(goodWords);
@@ -68,17 +67,17 @@ public class DictionaryService /*implements ConfigurableDictionaryServiceMXBean*
 		return Collections.unmodifiableList(stopWords);
 	}
 
-	//@Override
+	@Override
 	public void addGoodWord(String goodWord) {
 		addIfNotExists(goodWords, goodWord);
 	}
 
-	//@Override
+	@Override
 	public void addBadWord(String badWord) {
 		addIfNotExists(badWords, badWord);
 	}
 
-	//@Override
+	@Override
 	public void addStopWord(String stopWord) {
 		addIfNotExists(stopWords, stopWord);
 	}
@@ -89,23 +88,24 @@ public class DictionaryService /*implements ConfigurableDictionaryServiceMXBean*
 		}
 	}
 
-	//@Override
+	@Override
 	public void clearGoodWords() {
 		goodWords.clear();
 	}
 
-	//@Override
+	@Override
 	public void clearBadWords() {
 		badWords.clear();
 	}
 
-	//@Override
+	@Override
 	public void clearStopWords() {
 		stopWords.clear();
 	}
 
 
-	private static final String[] GOOD_WORDS = ("Woo\n" +
+	private static final String[] GOOD_WORDS = (
+			"Woo\n" +
 			"quite amazing\n" +
 			"thks\n" +
 			"looking forward to\n" +
@@ -278,9 +278,11 @@ public class DictionaryService /*implements ConfigurableDictionaryServiceMXBean*
 			"love\n" +
 			"glad\n" +
 			"yum\n" +
-			"interesting").split("\n");
+			"interesting"
+	).split("\n");
 
-	public static final String[] BAD_WORDS = ("FTL\n" +
+	public static final String[] BAD_WORDS = (
+			"FTL\n" +
 			"irritating \n" +
 			"not that good\n" +
 			"suck\n" +
@@ -464,9 +466,11 @@ public class DictionaryService /*implements ConfigurableDictionaryServiceMXBean*
 			"is a fool\n" +
 			"painful\n" +
 			"pain\n" +
-			"gross").split("\n");
+			"gross"
+	).split("\n");
 
-	public static final String[] STOP_WORDS = ("a\n" +
+	public static final String[] STOP_WORDS = (
+			"a\n" +
 			"about\n" +
 			"above\n" +
 			"after\n" +
@@ -622,5 +626,6 @@ public class DictionaryService /*implements ConfigurableDictionaryServiceMXBean*
 			"your\n" +
 			"yours\n" +
 			"yourself\n" +
-			"yourselves").split("\n");
+			"yourselves"
+	).split("\n");
 }

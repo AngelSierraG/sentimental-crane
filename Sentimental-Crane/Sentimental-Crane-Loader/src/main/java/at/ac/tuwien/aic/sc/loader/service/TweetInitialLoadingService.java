@@ -9,10 +9,14 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.log4j.Logger;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
+ * @author Bernhard Nickel
  */
 public class TweetInitialLoadingService {
     private static final Logger logger = Logger.getLogger(TweetInitialLoadingService.class);

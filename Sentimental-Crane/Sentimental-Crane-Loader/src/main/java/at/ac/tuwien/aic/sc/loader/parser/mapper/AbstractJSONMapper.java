@@ -5,8 +5,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
+ * @author Bernhard Nickel
  */
-public abstract class AbstractJSONMapper<T> implements JSONMapper<T>{
+public abstract class AbstractJSONMapper<T> implements JSONMapper<T> {
     @Override
     public T map(JSONObject jso) {
         try {

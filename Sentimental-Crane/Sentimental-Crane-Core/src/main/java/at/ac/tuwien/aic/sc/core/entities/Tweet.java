@@ -3,6 +3,7 @@ package at.ac.tuwien.aic.sc.core.entities;
 import java.util.Date;
 
 /**
+ * @author Bernhard Nickel
  */
 public class Tweet {
     private long id;

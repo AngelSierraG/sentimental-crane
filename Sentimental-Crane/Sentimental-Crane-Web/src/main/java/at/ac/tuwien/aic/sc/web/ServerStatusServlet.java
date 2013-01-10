@@ -24,7 +24,7 @@ public class ServerStatusServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.getWriter().println("1");
-		// response.getWriter().println(facade.getNumberOfInstances().toString());
+		String instances = facade != null ? facade.getNumberOfInstances().toString() : "0";
+		response.getWriter().println(instances);
 	}
 }

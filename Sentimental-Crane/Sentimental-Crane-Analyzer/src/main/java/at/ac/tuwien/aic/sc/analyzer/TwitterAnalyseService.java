@@ -14,11 +14,6 @@ import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.enterprise.context.ApplicationScoped;
 import javax.sql.DataSource;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
 import java.sql.*;
 import java.util.Collections;
 import java.util.Date;
@@ -30,7 +25,6 @@ import java.util.logging.Logger;
  * @author Dominik Strasser, dominikstr@gmail.com
  */
 @ApplicationScoped
-//@Path("/analyse")
 @Stateless
 @Remote(AnalysisService.class)
 @Clustered
@@ -39,44 +33,36 @@ public class TwitterAnalyseService implements AnalysisService {
 
 	@Resource(mappedName = "java:/jdbc/AICDS")
 	DataSource dataSource;
-	// @EJB
 	DictionaryService dictionaryService;
 
 	@PostConstruct
-	public void start() throws SQLException, ClassNotFoundException {
+	public void start() {
 		dictionaryService = DictionaryService.getInstance();
 
 		if (dataSource == null) {
-			Class.forName("com.google.appengine.api.rdbms.AppEngineDriver");
+			try {
+				Class.forName("com.google.appengine.api.rdbms.AppEngineDriver");
+			} catch (ClassNotFoundException e) {
+				throw new RuntimeException("No DataSource provided and connection cannot be established.", e);
+			}
 		}
 	}
 
-	@POST
-	@Produces(MediaType.APPLICATION_XML)
-	@Consumes(MediaType.APPLICATION_XML)
-	public AnalysisResult analyse(
-			Company company, 
-			@QueryParam("from") long from, 
-			@QueryParam("to") long to) {
-		Date fromDate = new Date(from);
-		Date toDate = new Date(to);
-		return analyse(company, fromDate, toDate);
-	}
-	
-
 	@Override
 	public AnalysisResult analyse(Company company, Date from, Date to) {
-		//perform same checks
+		// Perform same checks
 		if (company == null || company.getName() == null || company.getName().trim().isEmpty())
 			throw new IllegalArgumentException("Analysis isn't possible because of invalid company");
 		if (from == null || to == null)
 			throw new IllegalArgumentException("Analysis isn't possible: No date range specified");
 		if (from.after(to))
 			throw new IllegalArgumentException("Invalid date range: start date is after end date");
-		//okay, parameters seems to be okay - ready to rumble
+
+		// Okay, parameters seems to be okay - ready to rumble
 		long ms = 0;
 		if (logger.isLoggable(Level.INFO)) {
-			logger.log(Level.INFO, "Performing analysis for company " + company.getName() + "(" + company.getId() + "); date range is " + from + " to " + to);
+			logger.log(Level.INFO, String.format("Performing analysis for company %s(%d); date range is %s to %s",
+					company.getName(), company.getId(), from, to));
 			ms = System.currentTimeMillis();
 		}
 
@@ -93,6 +79,7 @@ public class TwitterAnalyseService implements AnalysisService {
 					String text = resultSet.getString(1);
 					text = text.toLowerCase();
 
+					// Check if the tweet is about the given company
 					final String finalText = text;
 					if (!CollectionUtils.exists(companyString(company.getName()), new Predicate() {
 						@Override
@@ -103,11 +90,13 @@ public class TwitterAnalyseService implements AnalysisService {
 						continue;
 					}
 
+					// Process the tweet
 					text = text.replaceAll("[.,]", "");
 					for (String word : dictionaryService.getStopWords()) {
 						text = text.replace(" " + word + " ", " ");
 					}
 
+					// Calculate the sentiment value of the tweet regarding the given company
 					for (String word : dictionaryService.getGoodWords()) {
 						int matches = StringUtils.countMatches(text, word);
 						if (matches != 0) {
@@ -122,16 +111,15 @@ public class TwitterAnalyseService implements AnalysisService {
 					}
 				}
 
-				/*
-				 * TODO: verify that adding up both counters is correct
-				 * subtracting them is not correct according to testFormula
-				 */
+				// Calculate the overall sentiment value
 				int sentimental = posCounter - negCounter;
 				int counter = posCounter + negCounter;
 				double result = counter == 0 ? 0 : (double) sentimental / counter;
 				result = (result + 1) / 2;
+
 				if (logger.isLoggable(Level.INFO)) {
-					logger.log(Level.INFO, "Analysis returned without exception in " + (System.currentTimeMillis() - ms) + "ms. Result was: " + result);
+					logger.log(Level.INFO, String.format("Analysis returned without exception in %dms. Result was: %s",
+							System.currentTimeMillis() - ms, result));
 				}
 				return new AnalysisResult(result, counter);
 			} finally {
@@ -151,6 +139,12 @@ public class TwitterAnalyseService implements AnalysisService {
 		return dataSource.getConnection();
 	}
 
+	/**
+	 * Returns the words associated with the given company name i.e., product names.
+	 *
+	 * @param name the company name
+	 * @return company-related words
+	 */
 	private List<String> companyString(String name) {
 		return Collections.singletonList(name.toLowerCase());
 	}

@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
 
 /**
+ * @author Bernhard Nickel
  */
 public interface PlaceMapper {
     @Select("SELECT * FROM tweet_place WHERE id = #{id}")

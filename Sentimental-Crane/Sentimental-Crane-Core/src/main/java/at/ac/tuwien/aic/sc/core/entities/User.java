@@ -1,6 +1,7 @@
 package at.ac.tuwien.aic.sc.core.entities;
 
 /**
+ * @author Bernhard Nickel
  */
 public class User {
     private long id;

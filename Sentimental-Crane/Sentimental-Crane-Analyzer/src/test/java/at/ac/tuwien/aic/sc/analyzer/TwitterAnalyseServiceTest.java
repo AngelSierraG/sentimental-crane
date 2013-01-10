@@ -73,7 +73,6 @@ public class TwitterAnalyseServiceTest {
 
 	@Test
 	@Ignore
-	//TODO: the problem is the not
 	public void testNonPositiveSentimental() throws Exception {
 		TwitterAnalyseService service = new TwitterAnalyseService();
 		service.dictionaryService = DICTIONARY_SERVICE;

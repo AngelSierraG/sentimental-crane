@@ -16,8 +16,9 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
+ * @author Bernhard Nickel
  */
-public class TweetMapper extends AbstractJSONMapper<Tweet>{
+public class TweetMapper extends AbstractJSONMapper<Tweet> {
     private static final String TWEET_DATE_FORMAT = "EEE MMM dd HH:mm:ss Z yyyy";
 
     private PlaceMapper placeMapper;
@@ -48,7 +49,7 @@ public class TweetMapper extends AbstractJSONMapper<Tweet>{
     }
 
     private Date getTweetDate(JSONObject jso) {
-      try {
+        try {
             return dateFormat.parse(jso.getString("created_at"));
         } catch (JSONException e) {
             throw new JSONMappingException(e);

@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * @author Bernhard Nickel
  */
 public class TweetFetchingService {
     private SqlSessionFactory sqlSessionFactory;
