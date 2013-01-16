@@ -243,8 +243,8 @@
                             $('#activeInstances').text("Running on Google App Engine");
                         } else {
                             $('#activeInstances').text("Active instances "+data);
+                            setTimeout(pollActiveInstances, 1000);
                         }
-                        setTimeout(pollActiveInstances, 1000);
                     }, "text");
                 }
 
