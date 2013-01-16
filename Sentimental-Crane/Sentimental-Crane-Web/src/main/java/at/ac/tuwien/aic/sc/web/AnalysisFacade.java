@@ -115,10 +115,12 @@ public class AnalysisFacade {
 	 * Note that this method simply waits some time to ensure that all components got notified about the request.
 	 */
 	protected void scheduleRequest() {
-		try {
-			Thread.sleep(7000);
-		} catch (InterruptedException ex) {
-			logger.log(Level.WARNING, "Load balancing interrupted", ex);
+		if (!EnvironmentUtils.isGoogleAppEngine()) {
+			try {
+				Thread.sleep(7000);
+			} catch (InterruptedException ex) {
+				logger.log(Level.WARNING, "Load balancing interrupted", ex);
+			}
 		}
 	}
 
