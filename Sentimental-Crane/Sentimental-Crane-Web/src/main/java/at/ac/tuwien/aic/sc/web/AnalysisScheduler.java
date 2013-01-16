@@ -2,6 +2,7 @@ package at.ac.tuwien.aic.sc.web;
 
 import at.ac.tuwien.aic.sc.analyzer.TwitterAnalyseService;
 import at.ac.tuwien.aic.sc.core.AnalysisResult;
+import at.ac.tuwien.aic.sc.core.AnalysisService;
 import at.ac.tuwien.aic.sc.core.entities.Company;
 
 import javax.ejb.AsyncResult;
@@ -9,6 +10,7 @@ import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.util.Date;
@@ -24,8 +26,9 @@ import java.util.logging.Logger;
 @Stateless
 public class AnalysisScheduler {
 	private static final Logger logger = Logger.getLogger(AnalysisFacade.class.getName());
-	@Inject	// TODO: change to AnalysisService
-	private TwitterAnalyseService analysisService;
+	@Inject
+	@Named("twitterAnalyseService")
+	private AnalysisService analysisService;
 
 	@Asynchronous
 	public Future<AnalysisResult> schedule(Company company, Date from, Date to) {
@@ -37,7 +40,7 @@ public class AnalysisScheduler {
 				properties.put(Context.SECURITY_CREDENTIALS, "test");
 				Context ctx = new InitialContext(properties);
 				String name = "ejb:/Sentimental-Crane-Analyzer-1.0-jar-with-dependencies/TwitterAnalyseService!at.ac.tuwien.aic.sc.core.AnalysisService";
-				analysisService = (TwitterAnalyseService) ctx.lookup(name);		// TODO: weaken cast
+				analysisService = (AnalysisService) ctx.lookup(name);
 			} catch (Exception e) {
 				logger.log(Level.SEVERE, "Error in JNDI lookup", e);
 			}

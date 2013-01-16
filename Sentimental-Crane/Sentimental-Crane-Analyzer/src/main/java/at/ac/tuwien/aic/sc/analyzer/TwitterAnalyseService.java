@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Named;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.Collections;
@@ -25,6 +26,7 @@ import java.util.logging.Logger;
  * @author Dominik Strasser, dominikstr@gmail.com
  */
 @ApplicationScoped
+@Named("twitterAnalyseService")
 @Stateless
 @Remote(AnalysisService.class)
 @Clustered
