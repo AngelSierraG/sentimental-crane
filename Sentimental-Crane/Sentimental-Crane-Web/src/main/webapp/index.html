@@ -236,20 +236,22 @@
 <div id="footer" class="navbar navbar-inverse navbar-fixed-bottom">
     <div class="navbar-inner">
         <div class="container">
-            Active instances
-            <!--
-                TODO: enable for OpenStack
+            <script>
                 function pollActiveInstances() {
                     $.post('server-status', function(data) {
-                        $('#activeInstances').text(data);
+                        if (data <= 0) {
+                            $('#activeInstances').text("Running on Google App Engine");
+                        } else {
+                            $('#activeInstances').text("Active instances "+data);
+                        }
                         setTimeout(pollActiveInstances, 1000);
                     }, "text");
                 }
 
                 $(document).ready(function() {
                     pollActiveInstances();
-                });
-            -->
+                })
+            </script>
             <span id="activeInstances">1</span>
         </div>
     </div>
