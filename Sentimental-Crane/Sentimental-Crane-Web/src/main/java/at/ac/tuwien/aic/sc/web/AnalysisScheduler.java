@@ -1,6 +1,5 @@
 package at.ac.tuwien.aic.sc.web;
 
-import at.ac.tuwien.aic.sc.analyzer.TwitterAnalyseService;
 import at.ac.tuwien.aic.sc.core.AnalysisResult;
 import at.ac.tuwien.aic.sc.core.AnalysisService;
 import at.ac.tuwien.aic.sc.core.entities.Company;

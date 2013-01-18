@@ -1,6 +1,5 @@
 package at.ac.tuwien.aic.sc.web;
 
-import at.ac.tuwien.aic.sc.analyzer.TwitterAnalyseService;
 import at.ac.tuwien.aic.sc.core.entities.Company;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
